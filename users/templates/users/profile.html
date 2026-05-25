@@ -1,0 +1,25 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+            <div class="text-center mb-4">
+                <img src="{{ user.profile.image.url }}" class="rounded-circle border border-4 border-white shadow-sm" style="width: 125px; height: 125px; object-fit: cover;">
+                <h2 class="fw-bold mt-3" style="color: #d81b60;">{{ user.username }}</h2>
+                <p class="text-muted">{{ user.email }}</p>
+            </div>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <legend class="border-bottom mb-4 small text-uppercase fw-bold text-secondary">Update Profile Info</legend>
+                {{ u_form|crispy }}
+                {{ p_form|crispy }}
+                <div class="d-grid mt-4">
+                    <button class="btn btn-pink fw-bold py-2" type="submit">Update Photo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

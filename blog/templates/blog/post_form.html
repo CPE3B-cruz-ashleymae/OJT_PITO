@@ -1,0 +1,46 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+            <h2 class="fw-bold mb-4">Add New Post</h2>
+            <hr class="text-muted mb-4">
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Manual rendering for the "Professional" input look -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-secondary">Title</label>
+                    {{ form.title }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-secondary">Content</label>
+                    {{ form.content }}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-secondary">Header Image</label>
+                    {{ form.image }}
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success fw-bold py-2 rounded-3" 
+                            style="background-color: #198754; border: none;" 
+                            type="submit">
+                        Submit
+                    </button>
+                    
+                    {% if object.id %}
+                        <a href="{% url 'post-detail' object.id %}" class="btn btn-link text-muted text-decoration-none small mt-2">Cancel</a>
+                    {% else %}
+                        <a href="{% url 'blog-home' %}" class="btn btn-link text-muted text-decoration-none small mt-2">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

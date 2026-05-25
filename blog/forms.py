@@ -1,0 +1,21 @@
+from django import forms
+from .models import Post
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'image']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control bg-light border-0 py-2 px-3',
+                'placeholder': 'Enter title'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control bg-light border-0 py-2 px-3',
+                'placeholder': 'Enter content',
+                'rows': 5
+            }),
+            'image': forms.FileInput(attrs={
+                'class': 'form-control-file'
+            }),
+        }
