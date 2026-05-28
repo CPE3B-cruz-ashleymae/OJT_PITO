@@ -1,67 +1,80 @@
 {% extends "blog/base.html" %}
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        {% for post in posts %}
-            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
-                <div class="card-body p-4">
+<div class="row g-4">
+    
+    <div class="col-lg-8">
+        <div class="post-feed-wrapper">
+            {% for post in posts %}
+                <article class="card p-4 mb-4 bg-white shadow-sm border-0">
+                    
                     <div class="d-flex align-items-center mb-3">
-                        <img class="rounded-circle border" src="{{ post.author.profile.image.url }}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 12px;">
-                        <div>
-                            <h6 class="mb-0 fw-bold" style="color: #d81b60;">{{ post.author.username }}</h6>
-                            <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+                        {% if post.author.profile.image %}
+                            <img class="rounded-circle me-2" src="{{ post.author.profile.image.url }}" style="width: 35px; height: 35px; object-fit: cover; border: 1px solid #f3e1e4;">
+                        {% elif post.author.image %}
+                            <img class="rounded-circle me-2" src="{{ post.author.image.url }}" style="width: 35px; height: 35px; object-fit: cover; border: 1px solid #f3e1e4;">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-2x me-2 text-muted"></i>
+                        {% endif %}
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold" style="color: #d81b60; font-size: 1.05rem; letter-spacing: -0.2px;">{{ post.author.username }}</span>
+                            <span class="text-muted" style="font-size: 0.9rem; font-weight: 400;">{{ post.date_posted|date:"M d, Y" }}</span>
                         </div>
                     </div>
-                    <h2 class="fw-bold"><a class="text-dark text-decoration-none" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    
+                    <h2 class="fw-bold mb-3" style="color: #1a1a1a; font-size: 1.85rem; letter-spacing: -0.3px; line-height: 1.3;">
+                        {{ post.title }}
+                    </h2>
+                    
                     {% if post.image %}
-                        <img src="{{ post.image.url }}" class="img-fluid rounded-3 my-3 w-100" style="max-height: 400px; object-fit: cover;">
+                        <div class="mb-3 rounded overflow-hidden" style="border: 1px solid #f7eaed;">
+                            <img src="{{ post.image.url }}" class="img-fluid w-100" style="object-fit: cover; max-height: 520px;">
+                        </div>
                     {% endif %}
-                    <p class="text-secondary">{{ post.content|truncatewords:30 }}</p>
-                    <a href="{% url 'post-detail' post.id %}" class="btn btn-outline-pink btn-sm rounded-pill">Read More</a>
+
+                    <div class="text-secondary mb-4" style="white-space: pre-wrap; word-break: break-word; font-size: 1rem; line-height: 1.65; color: #554446 !important;">
+                        {{ post.content }}
+                    </div>
+
+                    <div class="d-flex gap-2 border-top pt-3">
+                        <a href="{% url 'post-detail' post.id %}" class="btn btn-sm btn-outline-pink px-3 d-flex align-items-center gap-1.5">
+                            <i class="far fa-eye" style="font-size: 0.85rem;"></i> See Details
+                        </a>
+                        <a href="{% url 'post-update' post.id %}" class="btn btn-sm btn-light border-0 px-3 text-secondary d-flex align-items-center gap-1.5" style="background-color: #f8f5f6; font-size: 0.88rem; font-weight: 500; border-radius: 30px;">
+                            <i class="far fa-edit" style="font-size: 0.85rem;"></i> Edit Post
+                        </a>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="card p-5 text-center bg-white shadow-sm border-0 mb-4">
+                    <p class="text-muted mb-0" style="font-size: 0.95rem;">No log posts found in the system feed yet.</p>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
 
         {% if is_paginated %}
-            <nav class="my-5" aria-label="Page navigation">
-                <ul class="pagination justify-content-center border-0">
-                    
+            <nav aria-label="Page navigation" class="mt-4 mb-5">
+                <ul class="pagination justify-content-center align-items-center gap-2">
                     {% if page_obj.has_previous %}
                         <li class="page-item">
-                            <a class="page-link border-0 shadow-sm mx-1 rounded-pill px-3" 
-                               href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
-                               style="color: #d81b60; background-color: #fff;">
-                                Previous
-                            </a>
+                            <a class="page-link btn-outline-pink px-3 py-1.5" href="?page={{ page_obj.previous_page_number }}" style="border-radius: 20px; font-size: 0.85rem;">Previous</a>
                         </li>
                     {% endif %}
 
                     {% for num in page_obj.paginator.page_range %}
                         {% if page_obj.number == num %}
                             <li class="page-item">
-                                <span class="page-link border-0 shadow-sm mx-1 rounded-circle d-flex align-items-center justify-content-center" 
-                                      style="background-color: #d81b60; color: white; width: 40px; height: 40px;">
-                                    {{ num }}
-                                </span>
+                                <span class="page-link px-3 py-1.5 text-white border-0 fw-bold shadow-sm" style="background: linear-gradient(135deg, #e91e63, #c2185b); border-radius: 50%; min-width: 35px; text-center: center; font-size: 0.85rem;">{{ num }}</span>
                             </li>
                         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                             <li class="page-item">
-                                <a class="page-link border-0 shadow-sm mx-1 rounded-circle d-flex align-items-center justify-content-center" 
-                                   href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
-                                   style="color: #d81b60; background-color: #fff; width: 40px; height: 40px;">
-                                    {{ num }}
-                                </a>
+                                <a class="page-link btn-outline-pink p-0 d-flex align-items-center justify-content-center" href="?page={{ num }}" style="border-radius: 50%; width: 35px; height: 35px; font-size: 0.85rem;">{{ num }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
 
                     {% if page_obj.has_next %}
                         <li class="page-item">
-                            <a class="page-link border-0 shadow-sm mx-1 rounded-pill px-3" 
-                               href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
-                               style="color: #d81b60; background-color: #fff;">
-                                Next
-                            </a>
+                            <a class="page-link btn-outline-pink px-3 py-1.5" href="?page={{ page_obj.next_page_number }}" style="border-radius: 20px; font-size: 0.85rem;">Next</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -69,24 +82,32 @@
         {% endif %}
     </div>
 
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 90px;">
-            <div class="card-body text-center p-4">
+    <div class="col-lg-4">
+        <div class="position-sticky" style="top: 100px;">
+            <div class="card p-4 text-center bg-white shadow-sm border-0">
                 {% if user.is_authenticated %}
-                    <img src="{{ user.profile.image.url }}" class="rounded-circle border border-4 border-white shadow-sm mb-3" style="width: 110px; height: 110px; object-fit: cover;">
-                    <h5 class="fw-bold" style="color: #d81b60;">{{ user.username }}</h5>
-                    <p class="text-muted small">{{ user.email }}</p>
-                    <hr class="opacity-25">
-                    <div class="d-grid">
-                        <a href="{% url 'post-create' %}" class="btn btn-pink btn-sm rounded-pill py-2">Write New Post</a>
+                    <div class="d-inline-block mx-auto mb-3">
+                        <img class="rounded-circle shadow-sm" src="{{ user.profile.image.url }}" style="width: 110px; height: 110px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 8px 24px rgba(194,24,91,0.08);">
+                    </div>
+                    <h4 class="fw-bold mb-1" style="color: #2c1e21; font-size: 1.25rem; letter-spacing: -0.2px;">{{ user.username }}</h4>
+                    <p class="text-muted mb-4" style="font-size: 0.85rem;">{{ user.email }}</p>
+                    
+                    <div class="d-flex flex-column gap-2">
+                        <a class="btn btn-pink w-100 py-2.5" href="{% url 'post-create' %}">
+                            <i class="fas fa-pen me-1.5" style="font-size: 0.85rem;"></i> Write New Post
+                        </a>
+                        <a class="btn btn-outline-pink w-100 py-2.5 d-flex align-items-center justify-content-center gap-2" href="{% url 'profile' %}" style="font-size: 0.9rem;">
+                            <i class="fas fa-user-cog" style="font-size: 0.85rem;"></i> Change Profile
+                        </a>
                     </div>
                 {% else %}
-                    <h6 class="fw-bold mb-3">Welcome to DevBlog</h6>
-                    <p class="small text-muted">Join our pink community to share your insights!</p>
-                    <a href="{% url 'login' %}" class="btn btn-pink btn-sm w-100 rounded-pill">Login</a>
+                    <h5 class="fw-bold mb-2" style="color: #c2185b;">Welcome to DevBlog</h5>
+                    <p class="small text-muted mb-4">Log in to post your updates and view track logs.</p>
+                    <a class="btn btn-pink w-100 py-2" href="{% url 'login' %}">Sign In</a>
                 {% endif %}
             </div>
         </div>
     </div>
+
 </div>
 {% endblock content %}

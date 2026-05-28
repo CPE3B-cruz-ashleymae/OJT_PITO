@@ -1,25 +1,85 @@
 {% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
-            <div class="text-center mb-4">
-                <img src="{{ user.profile.image.url }}" class="rounded-circle border border-4 border-white shadow-sm" style="width: 125px; height: 125px; object-fit: cover;">
-                <h2 class="fw-bold mt-3" style="color: #d81b60;">{{ user.username }}</h2>
-                <p class="text-muted">{{ user.email }}</p>
-            </div>
+    <div class="content-section" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);">
+      
+      <div class="media d-flex align-items-center mb-4">
+        
+        <div class="position-relative" style="width: 125px; height: 125px;">
+            <img class="rounded-circle account-img" src="{{ user.profile.image.url }}" style="width: 125px; height: 125px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
             
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <legend class="border-bottom mb-4 small text-uppercase fw-bold text-secondary">Update Profile Info</legend>
-                {{ u_form|crispy }}
-                {{ p_form|crispy }}
-                <div class="d-grid mt-4">
-                    <button class="btn btn-pink fw-bold py-2" type="submit">Update Photo</button>
-                </div>
-            </form>
+            <button class="btn btn-dark btn-sm rounded-circle position-absolute bottom-0 end-0 d-flex align-items-center justify-content-center" 
+                    style="width: 36px; height: 36px; border: 2px solid #fff; background-color: #c71585; color: white;" 
+                    onclick="triggerPhotoHiddenInput()" 
+                    title="Change Profile Photo">
+                <i class="fas fa-camera" style="font-size: 0.85rem;"></i>
+            </button>
         </div>
+
+        <div class="media-body ms-4">
+          <h2 class="account-heading" style="color: #c71585; font-weight: bold; margin-bottom: 2px;">{{ user.username }}</h2>
+          <p class="text-secondary mb-2">{{ user.email }}</p>
+          
+          <button id="toggleEditBtn" class="btn btn-sm btn-outline-secondary" onclick="toggleEditForm()">
+              <i class="fas fa-edit"></i> Change Profile Details
+          </button>
+        </div>
+      </div>
+      
+      <div id="editFormContainer" style="display: none; border-top: 1px solid #e9ecef; padding-top: 20px;" class="mt-4">
+          <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <fieldset class="form-group">
+                  <legend class="border-bottom mb-4" style="color: #c71585; font-size: 1.2rem; font-weight: 600;">Update Account Details</legend>
+                  {{ u_form|crispy }}
+                  
+                  <div id="profileFormFieldsWrapper">
+                      {{ p_form|crispy }}
+                  </div>
+              </fieldset>
+              <div class="form-group d-flex gap-2 mt-3">
+                  <button class="btn text-white" type="submit" style="background-color: #c71585;">Save Changes</button>
+                  <button class="btn btn-light border" type="button" onclick="toggleEditForm()">Cancel</button>
+              </div>
+          </form>
+      </div>
+
     </div>
-</div>
+
+    <script>
+        // Toggles the entire editing section container view
+        function toggleEditForm() {
+            const formContainer = document.getElementById('editFormContainer');
+            const toggleBtn = document.getElementById('toggleEditBtn');
+            
+            if (formContainer.style.display === 'none') {
+                formContainer.style.display = 'block';
+                toggleBtn.innerHTML = '<i class="fas fa-times"></i> Close Settings';
+                toggleBtn.classList.replace('btn-outline-secondary', 'btn-outline-danger');
+            } else {
+                formContainer.style.display = 'none';
+                toggleBtn.innerHTML = '<i class="fas fa-edit"></i> Change Profile Details';
+                toggleBtn.classList.replace('btn-outline-danger', 'btn-outline-secondary');
+            }
+        }
+
+        // When the camera icon overlay is clicked, it highlights/clicks the actual file upload field
+        function triggerPhotoHiddenInput() {
+            // Locates the file type input field rendered by Django's p_form inside crispy forms
+            const fileInput = document.getElementById('editFormContainer').querySelector('input[type="file"]');
+            
+            if (fileInput) {
+                // Open up the settings tray so the user can clearly see what they are replacing
+                const formContainer = document.getElementById('editFormContainer');
+                if (formContainer.style.display === 'none') {
+                    toggleEditForm();
+                }
+                // Trigger the system file selector window panel
+                fileInput.click();
+            } else {
+                alert("Could not locate the image file selector field. Ensure p_form is active.");
+            }
+        }
+    </script>
 {% endblock content %}

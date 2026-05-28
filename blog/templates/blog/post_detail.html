@@ -1,40 +1,29 @@
 {% extends "blog/base.html" %}
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'blog-home' %}" class="text-decoration-none text-muted">Home</a></li>
-                <li class="breadcrumb-item active">Article</li>
-            </ol>
-        </nav>
-
-        <article class="bg-white p-4 p-md-5 shadow-sm rounded-4">
-            <header class="mb-4 text-center">
-                <h1 class="display-5 fw-bold mb-3">{{ object.title }}</h1>
-                <div class="text-muted small">
-                    <span class="fw-bold text-primary">{{ object.author }}</span> 
-                    &bull; {{ object.date_posted|date:"F d, Y" }}
-                </div>
-            </header>
-
-            {% if object.image %}
-                <div class="mb-5">
-                    <img src="{{ object.image.url }}" class="img-fluid rounded-4 shadow-sm w-100" style="max-height: 450px; object-fit: cover;">
-                </div>
-            {% endif %}
-
-            <div class="article-body fs-5 text-dark leading-relaxed" style="white-space: pre-line;">
-                {{ object.content }}
+    <article class="card p-4 mb-4 bg-white border-0 shadow-sm">
+        <div class="d-flex align-items-center mb-4">
+            <img class="rounded-circle me-3" src="{{ object.author.profile.image.url }}" style="width: 50px; height: 50px; object-fit: cover;">
+            <div>
+                <a class="fw-bold text-decoration-none" href="#" style="color: #d81b60;">{{ object.author.username }}</a>
+                <small class="text-muted d-block">{{ object.date_posted|date:"F d, Y" }}</small>
             </div>
+        </div>
+        
+        <h1 class="fw-bold mb-3" style="color: #4a4a4a;">{{ object.title }}</h1>
+        <div class="text-secondary lh-lg mb-4" style="white-space: pre-line;">
+            {{ object.content }}
+        </div>
+
+        <div class="d-flex gap-2 border-top pt-3">
+            <a href="{% url 'blog-home' %}" class="btn btn-sm btn-outline-pink px-3">
+                <i class="fas fa-arrow-left me-1"></i> Back to Feed
+            </a>
 
             {% if object.author == user %}
-                <div class="mt-5 pt-4 border-top d-flex gap-2">
-                    <a class="btn btn-sm btn-outline-secondary px-4 rounded-pill" href="{% url 'post-update' object.id %}">Edit</a>
-                    <a class="btn btn-sm btn-outline-danger px-4 rounded-pill" href="{% url 'post-delete' object.id %}">Delete</a>
-                </div>
+                <a href="{% url 'post-update' object.id %}" class="btn btn-sm btn-light border px-3" style="color: #4a4a4a;">
+                    <i class="fas fa-edit me-1"></i> Edit Post
+                </a>
             {% endif %}
-        </article>
-    </div>
-</div>
+        </div>
+    </article>
 {% endblock content %}

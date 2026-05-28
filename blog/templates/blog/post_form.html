@@ -1,46 +1,30 @@
 {% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-7">
-        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
-            <h2 class="fw-bold mb-4">Add New Post</h2>
-            <hr class="text-muted mb-4">
+    <div class="card p-4 bg-white border-0 shadow-sm mb-4">
+        <h2 class="fw-bold mb-4" style="color: #880e4f;">
+            {% if 'update' in request.path %}
+                <i class="fas fa-edit me-2" style="color: #d81b60;"></i> Edit Your Post
+            {% else %}
+                <i class="fas fa-pen-nib me-2" style="color: #d81b60;"></i> Create A New Post
+            {% endif %}
+        </h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group mb-4">
+                {{ form|crispy }}
+            </fieldset>
             
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <!-- Manual rendering for the "Professional" input look -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-secondary">Title</label>
-                    {{ form.title }}
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-secondary">Content</label>
-                    {{ form.content }}
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-bold small text-secondary">Header Image</label>
-                    {{ form.image }}
-                </div>
-
-                <div class="d-grid gap-2">
-                    <button class="btn btn-success fw-bold py-2 rounded-3" 
-                            style="background-color: #198754; border: none;" 
-                            type="submit">
-                        Submit
-                    </button>
-                    
-                    {% if object.id %}
-                        <a href="{% url 'post-detail' object.id %}" class="btn btn-link text-muted text-decoration-none small mt-2">Cancel</a>
-                    {% else %}
-                        <a href="{% url 'blog-home' %}" class="btn btn-link text-muted text-decoration-none small mt-2">Cancel</a>
-                    {% endif %}
-                </div>
-            </form>
-        </div>
+            <div class="form-group d-flex gap-2">
+                <button class="btn btn-pink px-4 py-2 fw-semibold" type="submit">
+                    Save Changes
+                </button>
+                <a class="btn btn-light border px-4 py-2 text-secondary" href="{% if object %}{% url 'post-detail' object.id %}{% else %}{% url 'blog-home' %}{% endif %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
     </div>
-</div>
 {% endblock content %}

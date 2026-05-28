@@ -1,15 +1,20 @@
 {% extends "blog/base.html" %}
 {% block content %}
-    <div class="card shadow-sm p-4">
+    <div class="card p-4 bg-white border-0 shadow-sm mb-4">
+        <h2 class="fw-bold mb-3" style="color: #880e4f;">Delete Post</h2>
+        <p class="text-secondary mb-4">
+            Are you absolutely sure you want to delete the post titled <strong class="text-dark">"{{ object.title }}"</strong>? This action cannot be undone.
+        </p>
+
         <form method="POST">
             {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Delete Post</legend>
-                <p>Are you sure you want to delete the post "{{ object.title }}"?</p>
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-danger" type="submit">Yes, Delete</button>
-                <a class="btn btn-outline-secondary" href="{% url 'blog-home' %}">Cancel</a>
+            <div class="form-group d-flex gap-2">
+                <button class="btn btn-danger px-4 py-2 fw-semibold" type="submit">
+                    Yes, Delete
+                </button>
+                <a class="btn btn-light border px-4 py-2 text-secondary" href="{% url 'post-detail' object.id %}">
+                    Cancel
+                </a>
             </div>
         </form>
     </div>

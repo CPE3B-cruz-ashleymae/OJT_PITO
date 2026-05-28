@@ -1,5 +1,30 @@
 {% extends "blog/base.html" %}
 {% block content %}
-    <h2>You have been logged out.</h2>
-    <a href="{% url 'login' %}">Log In Again</a>
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-6 col-lg-5">
+        
+        <div class="card p-5 text-center bg-white shadow-sm border-0 animated fadeIn">
+            
+            <div class="d-inline-flex align-items-center justify-content-center mx-auto mb-4 rounded-circle" 
+                 style="width: 80px; height: 80px; background-color: #fdf2f4; color: #c2185b;">
+                <i class="fas fa-sign-out-alt fa-2x"></i>
+            </div>
+            
+            <h2 class="fw-bold mb-2" style="color: #2c1e21; font-size: 1.75rem; letter-spacing: -0.3px;">
+                Logged Out Successfully
+            </h2>
+            <p class="text-secondary mb-4" style="font-size: 0.95rem; line-height: 1.5; color: #614e52 !important;">
+                Thank you for spending time with DevBlog. You have been securely signed out of your session.
+            </p>
+            
+            <hr class="my-4" style="border-color: #f3e1e4;">
+            
+            <a class="btn btn-pink w-100 py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2" href="{% url 'login' %}">
+                <i class="fas fa-sign-in-alt" style="font-size: 0.9rem;"></i> Log In Again
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
 {% endblock content %}
