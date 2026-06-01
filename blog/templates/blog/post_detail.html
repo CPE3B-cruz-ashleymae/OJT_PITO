@@ -1,16 +1,18 @@
 {% extends "blog/base.html" %}
+
 {% block content %}
-    <article class="card p-4 mb-4 bg-white border-0 shadow-sm">
+    <article class="card p-4 mb-4 border-0 shadow-sm">
         <div class="d-flex align-items-center mb-4">
             <img class="rounded-circle me-3" src="{{ object.author.profile.image.url }}" style="width: 50px; height: 50px; object-fit: cover;">
             <div>
-                <a class="fw-bold text-decoration-none" href="#" style="color: #d81b60;">{{ object.author.username }}</a>
+                <a class="fw-bold text-decoration-none" href="#" style="color: var(--pink-primary);">{{ object.author.username }}</a>
                 <small class="text-muted d-block">{{ object.date_posted|date:"F d, Y" }}</small>
             </div>
         </div>
         
-        <h1 class="fw-bold mb-3" style="color: #4a4a4a;">{{ object.title }}</h1>
-        <div class="text-secondary lh-lg mb-4" style="white-space: pre-line;">
+        <h1 class="fw-bold mb-3" style="color: var(--text-main);">{{ object.title }}</h1>
+        
+        <div id="markdown-content-body" class="text-secondary lh-lg mb-4">
             {{ object.content }}
         </div>
 
@@ -20,10 +22,51 @@
             </a>
 
             {% if object.author == user %}
-                <a href="{% url 'post-update' object.id %}" class="btn btn-sm btn-light border px-3" style="color: #4a4a4a;">
+                <a href="{% url 'post-update' object.id %}" class="btn btn-sm btn-light border px-3" style="color: var(--text-main); background-color: var(--search-bg); border-color: var(--border-color) !important;">
                     <i class="fas fa-edit me-1"></i> Edit Post
                 </a>
             {% endif %}
         </div>
     </article>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const contentArea = document.getElementById("markdown-content-body");
+            if (contentArea) {
+                // Cleanly parse raw model text string layout content into HTML
+                const rawText = contentArea.textContent || contentArea.innerText;
+                contentArea.innerHTML = marked.parse(rawText.trim());
+                
+                // Re-trigger Prism engine highlight parsing pass on dynamically generated DOM nodes
+                if (window.Prism) {
+                    Prism.highlightAllUnder(contentArea);
+                }
+            }
+        });
+    </script>
+
+    <style>
+        /* Styling adjustments for technical rendering components inside articles */
+        #markdown-content-body pre {
+            background-color: #1d1f21 !important;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+        }
+        #markdown-content-body code {
+            font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+            font-size: 0.92rem;
+        }
+        /* Style normal inline single-backtick code snippets safely */
+        #markdown-content-body :not(pre) > code {
+            background-color: var(--search-bg);
+            color: var(--pink-primary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            font-size: 0.88rem;
+        }
+    </style>
 {% endblock content %}

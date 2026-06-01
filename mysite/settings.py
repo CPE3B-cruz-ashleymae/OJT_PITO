@@ -153,5 +153,5 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
 
-# Standardized Redirect Route Targets
 LOGIN_REDIRECT_URL = 'blog-home'
+LOGOUT_REDIRECT_URL = 'blog-home'
