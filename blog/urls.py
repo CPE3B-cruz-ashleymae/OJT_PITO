@@ -15,4 +15,8 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     path('about/', views.about, name='blog-about'),
+    # Custom Admin Dashboard Routes
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-dashboard/toggle-user/<int:user_id>/', views.toggle_user_status, name='toggle_user_status'),
+    path('admin-dashboard/delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
 ]

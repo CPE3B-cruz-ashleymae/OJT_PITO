@@ -1,20 +1,21 @@
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from users import views as user_views
-from django.conf import settings
-from django.conf.urls.static import static
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import user_passes_test
+
+# Helper function to check if the user is a superuser/admin
+def admin_required(user):
+    return user.is_authenticated and user.is_superuser
+
+# Custom view to explicitly catch /admin/ attempts and block them
+def disabled_admin_view(request):
+    # This prevents anyone from accessing the default panel, even if they guess the URL
+    return redirect('admin_dashboard')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('register/', user_views.register, name='register'),
-    # These two lines fix the NoReverseMatch error
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
+    # 1. Disable the default Django Admin completely
+    path('admin/', disabled_admin_view),
+    
+    # 2. Include your app's URLs (Assuming your app name is 'blog' or similar)
     path('', include('blog.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('profile/', user_views.profile, name='profile'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
