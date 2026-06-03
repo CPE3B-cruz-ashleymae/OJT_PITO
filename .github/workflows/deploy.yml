@@ -2,19 +2,16 @@ name: Deploy Django Updates automatically
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   deploy:
-    runs-on: self-hosted  # This is where that text belongs!
+    runs-on: self-hosted
 
     steps:
+      # 👇 MAKE SURE THIS STEP IS PRESENT AND AT THE VERY TOP
       - name: Pull latest code from GitHub
-        run: |
-          cd ~/projects/OJT_PITO
-          git checkout main
-          git pull origin main
+        uses: actions/checkout@v4
 
       - name: Install dependencies and run migrations
         run: |
@@ -25,5 +22,4 @@ jobs:
 
       - name: Restart Services
         run: |
-          sudo fuser -k 8000/tcp || true
           sudo service nginx restart
