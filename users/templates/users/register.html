@@ -1,10 +1,29 @@
 {% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
-    <h1>Join Today</h1>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Sign Up</button>
-    </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Sign In</a></p>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-body-tertiary">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold" style="color: var(--pink-primary);">Join Today</h2>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form|crispy }}
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn fw-bold py-2 text-white rounded-3" style="background: var(--pink-gradient); border: none;" type="submit">Sign Up</button>
+                </div>
+            </form>
+
+            <div class="text-center mt-4">
+                <p class="small text-secondary">Already have an account? 
+                    <a href="{% url 'login' %}" class="text-decoration-none fw-bold" style="color: var(--pink-primary);">Sign In</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

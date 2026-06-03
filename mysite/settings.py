@@ -156,3 +156,16 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 
 LOGIN_REDIRECT_URL = 'blog-home'
 LOGOUT_REDIRECT_URL = 'blog-home'
+
+# Email Configuration for Password Reset Development
+# Email Configuration for Password Reset Development
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Live SMTP Email Settings (Gmail)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ashleymaecruz126@gmail.com'
+EMAIL_HOST_PASSWORD = 'btyi bqsj pinw gxxz'
+DEFAULT_FROM_EMAIL = 'Web Admin <ashleymaecruz126@gmail.com>'
