@@ -1,10 +1,10 @@
 {% extends 'blog/base.html' %}
 
 {% block content %}
-<div class="container mt-5" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); padding: 30px; border-radius: 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+<div class="container mt-5 p-4 rounded-4 shadow-sm bg-body-tertiary">
     
     <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
-        <h2 style="font-family: 'Georgia', serif; color: #800020;">Custom Administrative Dashboard</h2>
+        <h2 class="fw-bold" style="color: var(--pink-primary);">Custom Administrative Dashboard</h2>
         <span class="badge bg-danger p-2">Secure Admin Mode</span>
     </div>
 
@@ -17,10 +17,10 @@
         {% endfor %}
     {% endif %}
 
-    <h3 class="h5 mb-3" style="color: #555;">User Management Controls</h3>
+    <h3 class="h5 mb-3 text-secondary">User Management Controls</h3>
     <div class="table-responsive">
-        <table class="table table-hover align-middle" style="background: #fff; border-radius: 8px; overflow: hidden;">
-            <thead style="background-color: #800020; color: #fff;">
+        <table class="table table-hover align-middle table-striped-columns">
+            <thead class="table-dark">
                 <tr>
                     <th>Username</th>
                     <th>Email</th>
@@ -50,10 +50,10 @@
                     </td>
                     <td class="text-center">
                         {% if not user.is_superuser %}
-                            <a href="{% url 'toggle_user_status' user.id %}" class="btn btn-sm {% if user.is_active %}btn-warning{% else %}btn-success{% endif %}me-1">
+                            <a href="{% url 'toggle_user_status' user.id %}" class="btn btn-sm {% if user.is_active %}btn-warning{% else %}btn-success{% endif %} me-1">
                                 {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
                             </a>
-                            <a href="{% url 'delete_user' user.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you completely sure you want to delete this user? This cannot be undone.');">
+                            <a href="{% url 'delete_user' user.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you completely sure you want to delete this user?');">
                                 Delete
                             </a>
                         {% else %}

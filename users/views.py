@@ -1,10 +1,32 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm  # Or your custom registration form if you use one
+from django.contrib.auth.forms import UserCreationForm
 from .forms import UserUpdateForm, ProfileUpdateForm
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm
 
-# 1. RESTORED: Your missing user registration view function
+# 1. UPDATED: Login view with custom redirect logic
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            auth_login(request, user)
+            
+            # --- CUSTOM REDIRECT LOGIC ---
+            # If they are a superuser, send to the Admin Dashboard
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+            # Otherwise, send to the standard Blog Feed
+            return redirect('blog-home')
+        else:
+            messages.error(request, "Invalid username or password.")
+    else:
+        form = AuthenticationForm()
+    return render(request, 'users/login.html', {'form': form})
+
+# 2. Registration view
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -17,7 +39,7 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
-# 2. RETAINED: Your profile information updating view function
+# 3. Profile update view
 @login_required
 def profile(request):
     if request.method == 'POST':
@@ -37,4 +59,4 @@ def profile(request):
         'u_form': u_form,
         'p_form': p_form
     }
-    return render(request, 'users/profile.html', context)
+    return render(request, 'users/profile.html', context)   

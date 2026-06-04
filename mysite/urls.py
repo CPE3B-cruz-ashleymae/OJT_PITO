@@ -10,7 +10,6 @@ def admin_required(user):
 
 # Custom view to explicitly catch /admin/ attempts and block them
 def disabled_admin_view(request):
-    # This redirects unauthorized admin access to your custom dashboard
     return redirect('admin_dashboard')
 
 urlpatterns = [
@@ -18,8 +17,9 @@ urlpatterns = [
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),
     
-    # Standard Authentication
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
+    # --- UPDATED: Using your custom login_view for redirect logic ---
+    path('login/', user_views.login_view, name='login'),
+    
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     # django-allauth Social Authentication
