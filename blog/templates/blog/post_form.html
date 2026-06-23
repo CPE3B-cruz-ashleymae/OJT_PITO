@@ -1,30 +1,230 @@
 {% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
-
+{% load static %}
 {% block content %}
-    <div class="card p-4 bg-white border-0 shadow-sm mb-4">
-        <h2 class="fw-bold mb-4" style="color: #880e4f;">
-            {% if 'update' in request.path %}
-                <i class="fas fa-edit me-2" style="color: #d81b60;"></i> Edit Your Post
-            {% else %}
-                <i class="fas fa-pen-nib me-2" style="color: #d81b60;"></i> Create A New Post
-            {% endif %}
-        </h2>
+<style>
+    body {
+        background: linear-gradient(135deg, #ffe0eb 0%, #ffb3c6 40%, #ff85a8 70%, #d11d5f 100%) !important;
+        min-height: 100vh;
+    }
 
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <fieldset class="form-group mb-4">
-                {{ form|crispy }}
-            </fieldset>
-            
-            <div class="form-group d-flex gap-2">
-                <button class="btn btn-pink px-4 py-2 fw-semibold" type="submit">
-                    Save Changes
-                </button>
-                <a class="btn btn-light border px-4 py-2 text-secondary" href="{% if object %}{% url 'post-detail' object.id %}{% else %}{% url 'blog-home' %}{% endif %}">
-                    Cancel
-                </a>
+    .container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    .post-form-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 6rem 1rem 2rem;
+    }
+
+    .post-form-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(209, 29, 95, 0.2);
+        overflow: hidden;
+    }
+
+    .post-form-header {
+        background: linear-gradient(135deg, #ff85a8 0%, #d11d5f 100%);
+        padding: 2rem 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .post-form-header::before {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+        top: -80px;
+        right: -50px;
+    }
+
+    .post-form-header::after {
+        content: '';
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+        bottom: -40px;
+        left: 30px;
+    }
+
+    .post-form-header h2 {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 900;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+
+    .post-form-header .header-subtitle {
+        color: rgba(255,255,255,0.85);
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .post-form-body {
+        padding: 2.5rem;
+    }
+
+    /* Form field styling */
+    .form-label {
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        color: #555 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .form-control {
+        border-radius: 14px !important;
+        border: 1.5px solid #f5d0dc !important;
+        padding: 0.8rem 1.1rem !important;
+        font-size: 0.95rem !important;
+        background: #fff8fa !important;
+        transition: all 0.2s ease !important;
+        width: 100% !important;
+    }
+
+    .form-control:focus {
+        border-color: #d11d5f !important;
+        box-shadow: 0 0 0 3px rgba(209,29,95,0.1) !important;
+        background: white !important;
+        outline: none !important;
+    }
+
+    textarea.form-control {
+        min-height: 200px !important;
+        resize: vertical !important;
+    }
+
+    /* File input */
+    .form-control[type="file"] {
+        padding: 0.6rem 1rem !important;
+        background: #fff0f5 !important;
+        border: 2px dashed #ffc1cc !important;
+        cursor: pointer !important;
+    }
+
+    .form-control[type="file"]:hover {
+        border-color: #d11d5f !important;
+        background: #fff5f8 !important;
+    }
+
+    /* Buttons */
+    .btn-save {
+        background: linear-gradient(135deg, #ff6b9d, #d11d5f);
+        color: white !important;
+        border: none;
+        border-radius: 50px;
+        padding: 0.85rem 2.5rem;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(209,29,95,0.35);
+        letter-spacing: 0.5px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-save:hover {
+        background: linear-gradient(135deg, #d11d5f, #a0154a);
+        box-shadow: 0 8px 25px rgba(209,29,95,0.45);
+        transform: translateY(-2px);
+        color: white !important;
+    }
+
+    .btn-cancel {
+        background: white;
+        color: #888 !important;
+        border: 1.5px solid #f0d0da;
+        border-radius: 50px;
+        padding: 0.85rem 2.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-cancel:hover {
+        background: #fff5f8;
+        border-color: #d11d5f;
+        color: #d11d5f !important;
+        transform: translateY(-1px);
+    }
+
+    .btn-group-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #fce4ec;
+    }
+
+    @media (max-width: 768px) {
+        .post-form-wrapper { padding: 5rem 1rem 2rem; }
+        .post-form-body { padding: 1.5rem; }
+        .post-form-header { padding: 1.5rem; }
+        .btn-group-actions { flex-direction: column; }
+        .btn-save, .btn-cancel { text-align: center; }
+    }
+</style>
+
+<div class="post-form-wrapper">
+    <div class="post-form-card">
+
+        <!-- Header -->
+        <div class="post-form-header">
+            <h2>
+                {% if 'update' in request.path %}
+                    ✏️ Edit Your Post
+                {% else %}
+                    ✍️ Create A New Post
+                {% endif %}
+            </h2>
+            <div class="header-subtitle">
+                {% if 'update' in request.path %}
+                    Update your post details below
+                {% else %}
+                    Share your thoughts with the DevBlog community
+                {% endif %}
             </div>
-        </form>
+        </div>
+
+        <!-- Form Body -->
+        <div class="post-form-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    {{ form|crispy }}
+                </fieldset>
+
+                <div class="btn-group-actions">
+                    <button class="btn-save" type="submit">
+                        💾 Save Changes
+                    </button>
+                    <a class="btn-cancel"
+                       href="{% if object %}{% url 'post-detail' object.id %}{% else %}{% url 'blog-home' %}{% endif %}">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
     </div>
+</div>
 {% endblock content %}

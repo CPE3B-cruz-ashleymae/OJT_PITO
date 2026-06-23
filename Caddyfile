@@ -1,0 +1,10 @@
+172.26.91.55.nip.io {
+    # This must match the directory where you ran collectstatic
+    root * /home/ashley_mae_cruz/projects/OJT_PITO/staticfiles
+    
+    # This enables Caddy to serve those static files
+    file_server
+    
+    # This sends your dynamic requests (views) to Django
+    reverse_proxy localhost:8000
+}

@@ -1,13 +1,38 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post, UserProfile, WorkExperience, Education, CivilServiceEligibility, TrainingProgram
 
+# Define the Inline models for one-to-many relationships
+class WorkExperienceInline(admin.StackedInline):
+    model = WorkExperience
+    extra = 1
+
+class EducationInline(admin.StackedInline):
+    model = Education
+    extra = 1
+
+class CivilServiceEligibilityInline(admin.StackedInline):
+    model = CivilServiceEligibility
+    extra = 1
+
+class TrainingProgramInline(admin.StackedInline):
+    model = TrainingProgram
+    extra = 1
+
+# Register the main Profile model with all its associated PDS inlines
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    inlines = [
+        WorkExperienceInline, 
+        EducationInline, 
+        CivilServiceEligibilityInline, 
+        TrainingProgramInline
+    ]
+    list_display = ('user', 'surname', 'mobile_number')
+    search_fields = ('user__username', 'surname')
+
+# Register the Post model
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    # This adds columns for Title, Author, and Date
     list_display = ('title', 'author', 'date_posted')
-    
-    # This adds a filter sidebar on the right
     list_filter = ('date_posted', 'author')
-    
-    # This adds a search bar at the top
     search_fields = ('title', 'content')

@@ -4,67 +4,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevBlog Premium</title>
-    
+    <title>DevBlog</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}?v=2.0">
+
     <style>
-        /* Moving Pink Gradient Background */
-        .animated-bg {
-            position: fixed;
-            top: 0; left: 0; 
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: linear-gradient(135deg, #fce4ec, #f8bbd0, #f48fb1);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+        /* ── Smooth transitions ─────────────────────────── */
+        *, *::before, *::after {
+            transition: background-color 0.25s ease, color 0.2s ease,
+                        border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* ══════════════════════════════════════════════════
+           ALL dark mode rules use body.dark-mode
+           (matches your existing main.css pattern)
+        ══════════════════════════════════════════════════ */
+
+        /* ── White card boxes (feed sidebar + profile card) ── */
+        body.dark-mode .col-lg-4 .card {
+            background-color: #1e1e1e !important;
+            border-color: #333 !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4) !important;
         }
 
-        body { background-color: transparent !important; margin: 0; padding: 0; }
-        .content-wrapper { background: rgba(255, 255, 255, 0.9); min-height: 100vh; }
-        .navbar { background-color: rgba(255, 255, 255, 0.95) !important; border-bottom: 1px solid #f3e1e4; }
-        .nav-link { color: #614e52 !important; font-weight: 500; }
-        .theme-toggle-btn { background: none; border: none; color: #614e52; }
+        /* ── Post feed white wrapper ────────────────────── */
+        body.dark-mode .post-feed-wrapper {
+            background-color: #1e1e1e !important;
+            border-color: #333 !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4) !important;
+        }
+
+        /* Posts inside feed wrapper */
+        body.dark-mode .post-feed-wrapper .card {
+            border-bottom-color: #333 !important;
+        }
+
+        /* ── Auth pages: left white panel ───────────────── */
+        body.dark-mode .bg-white {
+            background-color: #1e1e1e !important;
+        }
+
+        /* ── Forms ──────────────────────────────────────── */
+        body.dark-mode .form-control,
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="email"],
+        body.dark-mode input[type="password"],
+        body.dark-mode input[type="date"],
+        body.dark-mode input[type="number"],
+        body.dark-mode input[type="search"],
+        body.dark-mode input[type="file"],
+        body.dark-mode textarea,
+        body.dark-mode select {
+            background-color: #2a2a2a !important;
+            color: #e0e0e0 !important;
+            border-color: #555 !important;
+        }
+
+        body.dark-mode .form-control::placeholder,
+        body.dark-mode input::placeholder,
+        body.dark-mode textarea::placeholder {
+            color: #888 !important;
+        }
+
+        body.dark-mode .form-control:focus,
+        body.dark-mode input:focus,
+        body.dark-mode textarea:focus,
+        body.dark-mode select:focus {
+            background-color: #2a2a2a !important;
+            color: #e0e0e0 !important;
+            border-color: #d11d5f !important;
+            box-shadow: 0 0 0 3px rgba(209,29,95,0.25) !important;
+        }
+
+        body.dark-mode select option {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+        }
+
+        /* ── Typography ─────────────────────────────────── */
+        body.dark-mode h1, body.dark-mode h2,
+        body.dark-mode h3, body.dark-mode h4,
+        body.dark-mode h5, body.dark-mode h6 {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode p,
+        body.dark-mode label,
+        body.dark-mode li,
+        body.dark-mode td,
+        body.dark-mode th {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .text-muted,
+        body.dark-mode small {
+            color: #888 !important;
+        }
+
+        /* ── Buttons ────────────────────────────────────── */
+        body.dark-mode .btn-soft-pink {
+            background-color: #2a1a22 !important;
+            color: #f48fb1 !important;
+            border-color: #6a2a45 !important;
+        }
+
+        body.dark-mode .btn-soft-pink:hover {
+            background-color: #6a2a45 !important;
+            color: #fff !important;
+        }
+
+        /* ── Tables (Admin) ─────────────────────────────── */
+        body.dark-mode table {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode thead th {
+            background-color: rgba(209,29,95,0.15) !important;
+            color: #e0e0e0 !important;
+            border-color: #333 !important;
+        }
+
+        body.dark-mode tbody tr:nth-child(even) {
+            background-color: rgba(255,255,255,0.03) !important;
+        }
+
+        body.dark-mode td,
+        body.dark-mode th {
+            border-color: #333 !important;
+        }
+
+        /* ── Admin sidebar ──────────────────────────────── */
+        body.dark-mode [class*="sidebar"],
+        body.dark-mode .admin-sidebar {
+            background-color: #181818 !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode [class*="sidebar"] a,
+        body.dark-mode .admin-sidebar a {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode [class*="sidebar"] a:hover {
+            background-color: rgba(209,29,95,0.15) !important;
+            color: #f48fb1 !important;
+        }
+
+        /* ── Stat cards (Admin dashboard) ───────────────── */
+        body.dark-mode [class*="stat"],
+        body.dark-mode [class*="metric"] {
+            background-color: #1e1e1e !important;
+            border-color: #333 !important;
+            color: #e0e0e0 !important;
+        }
+
+        /* ── Dividers ───────────────────────────────────── */
+        body.dark-mode hr {
+            border-color: #333 !important;
+        }
+
+        /* ── Scrollbar ──────────────────────────────────── */
+        body.dark-mode ::-webkit-scrollbar { width: 8px; }
+        body.dark-mode ::-webkit-scrollbar-track { background: #1a1a1a; }
+        body.dark-mode ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #d11d5f; }
     </style>
 </head>
 <body>
-    <div class="animated-bg"></div>
-    <div class="content-wrapper">
-        <nav class="navbar navbar-expand-lg sticky-top py-3">
-            <div class="container">
-                <a class="navbar-brand fw-bold" href="{% url 'blog-home' %}">DevBlog</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
+
+    <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold" href="{% url 'blog-home' %}" style="color: #800020;">DevBlog</a>
+            
+            <form class="d-flex flex-grow-1 justify-content-center" action="{% url 'blog-home' %}" method="GET">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search articles, topics..." aria-label="Search" style="max-width: 400px; border-radius: 20px;">
+            </form>
+
+            <div class="d-flex align-items-center">
+                <a class="nav-link me-3 fw-medium" href="{% url 'blog-home' %}">Feed</a>
+                {% if user.is_authenticated %}
+                    <a class="nav-link me-3 fw-medium" href="{% url 'post-create' %}">Write</a>
+
+                    <!-- PDS Button -->
+                    <a class="nav-link me-3 fw-medium" href="{% url 'pds-page' %}">
+                        <i class="fa-solid fa-id-card me-1"></i>PDS
+                    </a>
+
+                    <!-- Admin Dashboard Button (superuser only) -->
+                    {% if user.is_superuser %}
+                    <a class="nav-link me-3 fw-medium" href="{% url 'admin_dashboard' %}">
+                        <i class="fa-solid fa-gauge me-1"></i>Dashboard
+                    </a>
+                    {% endif %}
+
+                    <a class="nav-link me-3 fw-medium" href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
+                    <form id="logout-form" method="post" action="{% url 'logout' %}" class="d-none">{% csrf_token %}</form>
+                {% else %}
+                    <a class="nav-link me-3 fw-medium" href="{% url 'login' %}">Login</a>
+                {% endif %}
+                <button id="theme-toggle" class="btn btn-link nav-link" aria-label="Toggle dark mode">
+                    <i class="fa-solid fa-moon"></i>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto align-items-center">
-                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'blog-home' %}">Feed</a></li>
-                        {% if user.is_authenticated %}
-                            <li class="nav-item"><a class="nav-link px-3" href="{% url 'post-create' %}">Write</a></li>
-                            <li class="nav-item">
-                                <form id="logout-form" method="post" action="{% url 'logout' %}" class="d-none">{% csrf_token %}</form>
-                                <a class="nav-link px-3" href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item"><a class="nav-link px-3" href="{% url 'login' %}">Login</a></li>
-                        {% endif %}
-                        <li class="nav-item"><button class="theme-toggle-btn px-3" id="theme-toggle"><i class="fa-solid fa-moon"></i></button></li>
-                    </ul>
-                </div>
             </div>
-        </nav>
-        <div class="admin-content-container">
-            {% block content %}{% endblock %}
         </div>
+    </nav>
+
+    <div class="container" style="margin-top: 100px; background: transparent; box-shadow: none; padding: 0;">
+        {% block content %}{% endblock %}
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+            const STORAGE_KEY = 'devblog-dark-mode';
+            const body        = document.body;
+            const navbar      = document.getElementById('main-navbar');
+            const toggleBtn   = document.getElementById('theme-toggle');
+
+            const saved       = localStorage.getItem(STORAGE_KEY);
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const startDark   = saved !== null ? saved === 'true' : prefersDark;
+
+            function applyDark(dark) {
+                body.classList.toggle('dark-mode', dark);
+
+                navbar.classList.toggle('navbar-light', !dark);
+                navbar.classList.toggle('navbar-dark',  dark);
+                navbar.classList.toggle('bg-white',     !dark);
+                navbar.classList.toggle('bg-dark',      dark);
+
+                const icon = toggleBtn.querySelector('i');
+                if (icon) {
+                    icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+                }
+            }
+
+            applyDark(startDark);
+
+            toggleBtn.addEventListener('click', function () {
+                const nowDark = !body.classList.contains('dark-mode');
+                applyDark(nowDark);
+                localStorage.setItem(STORAGE_KEY, nowDark);
+            });
+        })();
+    </script>
 </body>
 </html>

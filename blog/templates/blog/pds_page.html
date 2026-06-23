@@ -1,0 +1,1973 @@
+{% extends "blog/base.html" %}
+{% load custom_filters %}
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #ffb6c1 0%, #ff69b4 50%, #ffb6c1 100%);
+        min-height: 100vh;
+    }
+    .pds-wrapper {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        padding-top: 6rem;
+    }
+    .pds-section {
+        background: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 32px rgba(255, 105, 180, 0.15);
+    }
+    .pds-section h4 {
+        color: #c2185b;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid #f8bbd0;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    .pds-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        color: #880e4f;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        display: block;
+    }
+    .pds-input {
+        border: 1.5px solid #f48fb1;
+        border-radius: 10px;
+        padding: 0.5rem 0.85rem;
+        font-size: 0.95rem;
+        width: 100%;
+        background: #fff0f5;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        color: #333;
+    }
+    .pds-input:focus {
+        border-color: #e91e8c;
+        outline: none;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1);
+    }
+    .pds-input[readonly],
+    .pds-input:disabled {
+        background: #fce4ec;
+        color: #888;
+        cursor: not-allowed;
+    }
+    .pds-btn {
+        background: linear-gradient(135deg, #e91e8c, #ff4db8);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.55rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.1s;
+        box-shadow: 0 4px 15px rgba(233, 30, 140, 0.3);
+    }
+    .pds-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+    .edu-table th {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #c2185b;
+        background: #fce4ec;
+        padding: 0.5rem 0.75rem;
+        text-transform: uppercase;
+    }
+    .edu-table td { padding: 0.5rem 0.5rem; vertical-align: middle; }
+    .edu-table .level-label { font-weight: 700; color: #880e4f; font-size: 0.95rem; }
+    .work-card {
+        background: #fff0f5;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.6rem;
+        border: 1px solid #f48fb1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .skill-badge {
+        background: #fce4ec;
+        color: #c2185b;
+        border-radius: 20px;
+        padding: 0.3rem 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0.2rem;
+        display: inline-block;
+        border: 1px solid #f48fb1;
+    }
+    .page-title {
+        color: #fff;
+        font-weight: 800;
+        font-size: 1.8rem;
+        margin-bottom: 0.2rem;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .page-subtitle { color: rgba(255,255,255,0.85); }
+    .btn-back {
+        background: rgba(255,255,255,0.25);
+        color: #fff;
+        border: 1.5px solid rgba(255,255,255,0.5);
+        border-radius: 10px;
+        padding: 0.45rem 1.1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: background 0.2s;
+        backdrop-filter: blur(4px);
+    }
+    .btn-back:hover {
+        background: rgba(255,255,255,0.4);
+        color: #fff;
+    }
+    .alert-pds-success {
+        background: #fce4ec;
+        border: 1px solid #f48fb1;
+        color: #880e4f;
+        border-radius: 10px;
+        padding: 0.8rem 1.2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    .alert-pds-success .btn-close-pds {
+        background: none;
+        border: none;
+        color: #c2185b;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .form-check-input:checked {
+        background-color: #e91e8c;
+        border-color: #e91e8c;
+    }
+    hr { border-color: #f8bbd0; }
+    .fw-semibold { color: #c2185b !important; }
+    select.pds-input option { background: #fff; color: #333; }
+    .location-loading-indicator {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.78rem;
+        color: #c2185b;
+        margin-top: 4px;
+    }
+    .location-loading-indicator.visible { display: flex; }
+    .location-loading-indicator .loc-spinner {
+        width: 12px;
+        height: 12px;
+        border: 2px solid #f48fb1;
+        border-top-color: #e91e8c;
+        border-radius: 50%;
+        animation: loc-spin 0.7s linear infinite;
+        flex-shrink: 0;
+    }
+    @keyframes loc-spin { to { transform: rotate(360deg); } }
+    .select2-container--default .select2-selection--single {
+        border: 1.5px solid #f48fb1 !important;
+        border-radius: 10px !important;
+        background: #fff0f5 !important;
+        height: 38px !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 0 0.85rem !important;
+        font-size: 0.95rem !important;
+        color: #333 !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
+    }
+    .select2-container--default .select2-selection--single:focus,
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #e91e8c !important;
+        background: #fff !important;
+        box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1) !important;
+        outline: none !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #333 !important;
+        line-height: 36px !important;
+        padding: 0 !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+        right: 8px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        border-color: #c2185b transparent transparent transparent !important;
+    }
+    .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+        border-color: transparent transparent #c2185b transparent !important;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #fce4ec !important;
+        color: #880e4f !important;
+    }
+    .select2-container--default .select2-results__option[aria-selected=true] {
+        background-color: #f8bbd0 !important;
+        color: #880e4f !important;
+    }
+    .select2-search--dropdown .select2-search__field {
+        border: 1.5px solid #f48fb1 !important;
+        border-radius: 6px !important;
+        padding: 4px 8px !important;
+        outline: none !important;
+    }
+    .select2-search--dropdown .select2-search__field:focus {
+        border-color: #e91e8c !important;
+    }
+    .select2-dropdown {
+        border: 1.5px solid #f48fb1 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 16px rgba(233, 30, 140, 0.12) !important;
+    }
+    .select2-container--default .select2-selection--single.select2-disabled,
+    .select2-container--default.select2-container--disabled .select2-selection--single {
+        background: #fce4ec !important;
+        cursor: not-allowed !important;
+        opacity: 0.7 !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #aaa !important;
+    }
+    @keyframes zip-flash {
+        0%   { background: #a5d6a7; border-color: #66bb6a; }
+        100% { background: #fff0f5; border-color: #f48fb1; }
+    }
+    .zip-autofilled {
+        animation: zip-flash 1.2s ease forwards;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+
+<div class="pds-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-title"><i class="fa-solid fa-id-card me-2"></i>My Personal Data Sheet</h2>
+            <small class="page-subtitle">Keep your information up to date</small>
+        </div>
+        <a href="{% url 'blog-home' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left me-1"></i>Back to Feed
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'success' in message.tags %}
+            <div class="alert-pds-success">
+                <span><i class="fa-solid fa-circle-check me-1"></i>{{ message }}</span>
+                <button class="btn-close-pds" onclick="this.parentElement.remove()">✕</button>
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <!-- I. PERSONAL INFORMATION -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-user me-2"></i>I. PERSONAL INFORMATION</h4>
+        <form method="post" action="{% url 'pds-update' %}">
+            {% csrf_token %}
+
+            <input type="hidden" name="res_province_name" id="res_province_name_input" value="{{ profile.res_province_name }}">
+            <input type="hidden" name="res_city_name"     id="res_city_name_input"     value="{{ profile.res_city_name }}">
+            <input type="hidden" name="res_barangay_name" id="res_barangay_name_input" value="{{ profile.res_barangay_name }}">
+            <input type="hidden" name="per_province_name" id="per_province_name_input" value="{{ profile.per_province_name }}">
+            <input type="hidden" name="per_city_name"     id="per_city_name_input"     value="{{ profile.per_city_name }}">
+            <input type="hidden" name="per_barangay_name" id="per_barangay_name_input" value="{{ profile.per_barangay_name }}">
+
+            <p class="fw-semibold mb-3" style="font-size:0.9rem;">Personal Details</p>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="pds-label">Surname *</label>
+                    <input class="pds-input" type="text" name="surname" value="{{ profile.surname }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">First Name *</label>
+                    <input class="pds-input" type="text" name="first_name" value="{{ profile.first_name }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Middle Name</label>
+                    <input class="pds-input" type="text" name="middle_name" value="{{ profile.middle_name }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Name Extension (Jr, Sr)</label>
+                    <input class="pds-input" type="text" name="name_extension" value="{{ profile.name_extension }}" placeholder="N/A if not applicable">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Age *</label>
+                    <input class="pds-input" type="text" name="age" value="{{ profile.age }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Date of Birth *</label>
+                    <input class="pds-input" type="date" name="dob" value="{{ profile.dob|date:'Y-m-d' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Place of Birth *</label>
+                    <input class="pds-input" type="text" name="place_of_birth" value="{{ profile.place_of_birth }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Sex *</label>
+                    <select class="pds-input" name="sex">
+                        <option value="Male" {% if profile.sex == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if profile.sex == 'Female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Civil Status *</label>
+                    <select class="pds-input" name="civil_status">
+                        {% for val, label in profile.CIVIL_STATUS_CHOICES %}
+                        <option value="{{ val }}" {% if profile.civil_status == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="pds-label">Height (M)</label>
+                    <input class="pds-input" type="text" name="height" value="{{ profile.height }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="pds-label">Weight (KG)</label>
+                    <input class="pds-input" type="text" name="weight" value="{{ profile.weight }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Blood Type</label>
+                    <select class="pds-input" name="blood_type">
+                        {% for val, label in profile.BLOOD_TYPE_CHOICES %}
+                        <option value="{{ val }}" {% if profile.blood_type == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Citizenship *</label>
+                    <select class="pds-input" name="citizenship">
+                        {% for val, label in profile.CITIZENSHIP_CHOICES %}
+                        <option value="{{ val }}" {% if profile.citizenship == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- RESIDENTIAL ADDRESS -->
+            <p class="fw-semibold mb-3" style="font-size:0.9rem;">Residential Address *</p>
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="pds-label">House/Block/Lot No.</label>
+                    <input class="pds-input" type="text" name="res_house_no" value="{{ profile.res_house_no }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Street *</label>
+                    <input class="pds-input" type="text" name="res_street" value="{{ profile.res_street }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Subdivision/Village</label>
+                    <input class="pds-input" type="text" name="res_subdivision" value="{{ profile.res_subdivision }}" placeholder="N/A if not applicable">
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Province *</label>
+                    <select class="pds-input" id="res_province" name="res_province">
+                        <option value="">Select Province</option>
+                        {% if profile.res_province %}
+                        <option value="{{ profile.res_province }}" selected>{{ profile.res_province_name|default:profile.res_province }}</option>
+                        {% endif %}
+                    </select>
+                    <div class="location-loading-indicator" id="res-province-loader">
+                        <span class="loc-spinner"></span> Loading provinces…
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">City/Municipality *</label>
+                    <select class="pds-input" id="res_city" name="res_city"
+                        {% if not profile.res_province %}disabled{% endif %}>
+                        <option value="">Select Municipality/City</option>
+                        {% if profile.res_city %}
+                        <option value="{{ profile.res_city }}" selected>{{ profile.res_city_name|default:profile.res_city }}</option>
+                        {% endif %}
+                    </select>
+                    <div class="location-loading-indicator" id="res-city-loader">
+                        <span class="loc-spinner"></span> Loading municipalities…
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Barangay *</label>
+                    <select class="pds-input" id="res_barangay" name="res_barangay"
+                        {% if not profile.res_city %}disabled{% endif %}>
+                        <option value="">Select Barangay</option>
+                        {% if profile.res_barangay %}
+                        <option value="{{ profile.res_barangay }}" selected>{{ profile.res_barangay_name|default:profile.res_barangay }}</option>
+                        {% endif %}
+                    </select>
+                    <div class="location-loading-indicator" id="res-barangay-loader">
+                        <span class="loc-spinner"></span> Loading barangays…
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Zip Code</label>
+                    <input class="pds-input" type="text" id="res_zip" name="res_zip"
+                        value="{{ profile.res_zip }}" placeholder="Auto-filled" readonly>
+                </div>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- PERMANENT ADDRESS -->
+            <p class="fw-semibold mb-2" style="font-size:0.9rem;">Permanent Address</p>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="same_as_residential" id="sameAddr"
+                    {% if profile.same_as_residential %}checked{% endif %} onchange="togglePermanent(this)">
+                <label class="form-check-label" for="sameAddr" style="color:#880e4f;">Same as Residential Address</label>
+            </div>
+
+            <div id="permanent-fields" {% if profile.same_as_residential %}style="display:none"{% endif %}>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="pds-label">House/Block/Lot No.</label>
+                        <input class="pds-input" type="text" name="per_house_no" value="{{ profile.per_house_no }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="pds-label">Street</label>
+                        <input class="pds-input" type="text" name="per_street" value="{{ profile.per_street }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="pds-label">Subdivision/Village</label>
+                        <input class="pds-input" type="text" name="per_subdivision" value="{{ profile.per_subdivision }}" placeholder="N/A if not applicable">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="pds-label">Province</label>
+                        <select class="pds-input" id="per_province" name="per_province">
+                            <option value="">Select Province</option>
+                            {% if profile.per_province %}
+                            <option value="{{ profile.per_province }}" selected>{{ profile.per_province_name|default:profile.per_province }}</option>
+                            {% endif %}
+                        </select>
+                        <div class="location-loading-indicator" id="per-province-loader">
+                            <span class="loc-spinner"></span> Loading provinces…
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="pds-label">City/Municipality</label>
+                        <select class="pds-input" id="per_city" name="per_city"
+                            {% if not profile.per_province %}disabled{% endif %}>
+                            <option value="">Select Municipality/City</option>
+                            {% if profile.per_city %}
+                            <option value="{{ profile.per_city }}" selected>{{ profile.per_city_name|default:profile.per_city }}</option>
+                            {% endif %}
+                        </select>
+                        <div class="location-loading-indicator" id="per-city-loader">
+                            <span class="loc-spinner"></span> Loading municipalities…
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="pds-label">Barangay</label>
+                        <select class="pds-input" id="per_barangay" name="per_barangay"
+                            {% if not profile.per_city %}disabled{% endif %}>
+                            <option value="">Select Barangay</option>
+                            {% if profile.per_barangay %}
+                            <option value="{{ profile.per_barangay }}" selected>{{ profile.per_barangay_name|default:profile.per_barangay }}</option>
+                            {% endif %}
+                        </select>
+                        <div class="location-loading-indicator" id="per-barangay-loader">
+                            <span class="loc-spinner"></span> Loading barangays…
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="pds-label">Zip Code</label>
+                        <input class="pds-input" type="text" id="per_zip" name="per_zip"
+                            value="{{ profile.per_zip }}" placeholder="Auto-filled" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-3">
+
+            <p class="fw-semibold mb-3" style="font-size:0.9rem;">Contact Numbers</p>
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="pds-label">Telephone No.</label>
+                    <input class="pds-input" type="text" name="telephone" value="{{ profile.telephone }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Mobile No. *</label>
+                    <input class="pds-input" type="text" name="mobile_number" value="{{ profile.mobile_number }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Email Address *</label>
+                    <input class="pds-input" type="email" name="email_address" value="{{ profile.email_address }}">
+                </div>
+            </div>
+            <button type="submit" class="pds-btn mt-2">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Save Personal Information
+            </button>
+        </form>
+    </div>
+
+    <!-- II. EDUCATIONAL BACKGROUND -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-graduation-cap me-2"></i>II. EDUCATIONAL BACKGROUND</h4>
+        <form method="post" action="{% url 'pds-save-education' %}">
+            {% csrf_token %}
+            <table class="edu-table w-100">
+                <thead>
+                    <tr>
+                        <th style="width:130px">Level</th>
+                        <th>School</th>
+                        <th>Course/Strand</th>
+                        <th style="width:120px">Year Graduated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for level in education_levels %}
+                    <tr>
+                        <td class="level-label">{{ level }}</td>
+                        <td>
+                            <input class="pds-input" type="text" name="edu_school_{{ level }}"
+                                value="{% if level in edu_dict %}{{ edu_dict|get_item:level|attr:'school_name' }}{% endif %}"
+                                placeholder="N/A if not applicable">
+                        </td>
+                        <td>
+                            <input class="pds-input" type="text" name="edu_degree_{{ level }}"
+                                value="{% if level in edu_dict %}{{ edu_dict|get_item:level|attr:'degree' }}{% endif %}"
+                                placeholder="N/A if not applicable">
+                        </td>
+                        <td>
+                            <input class="pds-input" type="text" name="edu_year_{{ level }}"
+                                value="{% if level in edu_dict %}{{ edu_dict|get_item:level|attr:'year_graduated' }}{% endif %}"
+                                placeholder="N/A if not applicable">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="pds-btn mt-3">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Save Education
+            </button>
+        </form>
+    </div>
+
+    <!-- III. WORK EXPERIENCE -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-briefcase me-2"></i>III. WORK EXPERIENCE</h4>
+        {% if work_experiences %}
+            {% for work in work_experiences %}
+            <div class="work-card">
+                <div>
+                    <strong style="color:#880e4f;">{{ work.position }}</strong> at {{ work.company }}<br>
+                    <small class="text-muted">
+                        {{ work.date_from }} &ndash;
+                        {% if work.currently_working %}Present{% else %}{{ work.date_to }}{% endif %}
+                    </small>
+                </div>
+                <a href="{% url 'pds-delete-work' work.id %}" class="btn btn-sm" style="background:#fce4ec;color:#c2185b;border:1px solid #f48fb1;">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted" style="font-size:0.9rem;">No work experience added yet.</p>
+        {% endif %}
+        <hr class="my-3">
+        <p class="fw-semibold mb-3" style="font-size:0.9rem;">Add Work Experience</p>
+        <form method="post" action="{% url 'pds-save-work' %}">
+            {% csrf_token %}
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="pds-label">Company / Office</label>
+                    <input class="pds-input" type="text" name="company" placeholder="Company name">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Position / Title</label>
+                    <input class="pds-input" type="text" name="position" placeholder="Job title">
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Date From</label>
+                    <input class="pds-input" type="date" name="date_from">
+                </div>
+                <div class="col-md-4">
+                    <label class="pds-label">Date To</label>
+                    <input class="pds-input" type="date" name="date_to">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="currently_working" id="currentWork">
+                        <label class="form-check-label" for="currentWork" style="color:#880e4f;">Currently Working Here</label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="pds-btn">
+                <i class="fa-solid fa-plus me-1"></i> Add Work Experience
+            </button>
+        </form>
+    </div>
+
+    <!-- IV. SKILLS -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-star me-2"></i>IV. SKILLS</h4>
+        <div class="mb-3">
+            {% if skills %}
+                {% for skill in skills %}
+                <span class="skill-badge">
+                    {{ skill.name }}
+                    <a href="{% url 'pds-delete-skill' skill.id %}" style="color:#c2185b;margin-left:6px;text-decoration:none;font-weight:700;" title="Remove">&times;</a>
+                </span>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted" style="font-size:0.9rem;">No skills added yet.</p>
+            {% endif %}
+        </div>
+        <form method="post" action="{% url 'pds-save-skill' %}">
+            {% csrf_token %}
+            <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="pds-label">Select a Skill</label>
+                    <select class="pds-input" id="skill_dropdown" onchange="handleSkillDropdown(this)">
+                        <option value="">— Choose a skill —</option>
+                        <optgroup label="Office &amp; Productivity">
+                            <option>Microsoft Word</option>
+                            <option>Microsoft Excel</option>
+                            <option>Microsoft PowerPoint</option>
+                            <option>Microsoft Access</option>
+                            <option>Microsoft Outlook</option>
+                            <option>Google Docs</option>
+                            <option>Google Sheets</option>
+                            <option>Google Slides</option>
+                            <option>Data Entry</option>
+                            <option>Typing (Fast &amp; Accurate)</option>
+                        </optgroup>
+                        <optgroup label="Information Technology">
+                            <option>Python</option>
+                            <option>Java</option>
+                            <option>JavaScript</option>
+                            <option>HTML &amp; CSS</option>
+                            <option>PHP</option>
+                            <option>C / C++</option>
+                            <option>C#</option>
+                            <option>SQL / Database Management</option>
+                            <option>Network Administration</option>
+                            <option>Hardware Troubleshooting</option>
+                            <option>Cybersecurity</option>
+                            <option>Web Development</option>
+                            <option>Mobile App Development</option>
+                            <option>Graphic Design (Photoshop/Canva)</option>
+                            <option>Video Editing</option>
+                            <option>IT Support / Help Desk</option>
+                        </optgroup>
+                        <optgroup label="Communication &amp; Language">
+                            <option>Public Speaking</option>
+                            <option>Business Writing</option>
+                            <option>Report Writing</option>
+                            <option>English Proficiency</option>
+                            <option>Filipino Proficiency</option>
+                            <option>Translation / Interpretation</option>
+                            <option>Customer Service</option>
+                            <option>Telephone Etiquette</option>
+                        </optgroup>
+                        <optgroup label="Administrative &amp; Clerical">
+                            <option>Records Management</option>
+                            <option>Office Management</option>
+                            <option>Filing &amp; Documentation</option>
+                            <option>Bookkeeping</option>
+                            <option>Payroll Processing</option>
+                            <option>Procurement</option>
+                            <option>Inventory Management</option>
+                            <option>Secretarial Work</option>
+                            <option>Scheduling &amp; Calendar Management</option>
+                        </optgroup>
+                        <optgroup label="Finance &amp; Accounting">
+                            <option>Accounting</option>
+                            <option>Auditing</option>
+                            <option>Financial Analysis</option>
+                            <option>Budget Management</option>
+                            <option>Tax Preparation</option>
+                            <option>Accounts Payable / Receivable</option>
+                            <option>QuickBooks / Accounting Software</option>
+                        </optgroup>
+                        <optgroup label="Health &amp; Medical">
+                            <option>First Aid &amp; CPR</option>
+                            <option>Patient Care</option>
+                            <option>Medical Records Management</option>
+                            <option>Nursing Procedures</option>
+                            <option>Laboratory Techniques</option>
+                            <option>Pharmacy Assistance</option>
+                            <option>Health Education</option>
+                        </optgroup>
+                        <optgroup label="Education &amp; Training">
+                            <option>Teaching / Instruction</option>
+                            <option>Curriculum Development</option>
+                            <option>Training Facilitation</option>
+                            <option>Coaching &amp; Mentoring</option>
+                            <option>Research &amp; Analysis</option>
+                            <option>Academic Writing</option>
+                        </optgroup>
+                        <optgroup label="Engineering &amp; Technical">
+                            <option>AutoCAD</option>
+                            <option>Blueprint Reading</option>
+                            <option>Electrical Wiring</option>
+                            <option>Plumbing</option>
+                            <option>Welding</option>
+                            <option>Carpentry</option>
+                            <option>Masonry</option>
+                            <option>Mechanical Repair</option>
+                            <option>Equipment Operation</option>
+                            <option>Quality Control / Inspection</option>
+                        </optgroup>
+                        <optgroup label="Leadership &amp; Management">
+                            <option>Project Management</option>
+                            <option>Team Leadership</option>
+                            <option>Strategic Planning</option>
+                            <option>Problem Solving</option>
+                            <option>Decision Making</option>
+                            <option>Conflict Resolution</option>
+                            <option>Event Planning &amp; Management</option>
+                        </optgroup>
+                        <optgroup label="Trades &amp; Vocational">
+                            <option>Driving (Professional)</option>
+                            <option>Cooking / Culinary Arts</option>
+                            <option>Baking &amp; Pastry</option>
+                            <option>Sewing / Dressmaking</option>
+                            <option>Automotive Repair</option>
+                            <option>Hairdressing / Cosmetology</option>
+                            <option>Electrician Work</option>
+                            <option>Air-Conditioning Repair (HVAC)</option>
+                            <option>Refrigeration Repair</option>
+                            <option>Gardening / Landscaping</option>
+                            <option>Agriculture / Farming</option>
+                            <option>Fishery / Aquaculture</option>
+                        </optgroup>
+                        <optgroup label="Others">
+                            <option value="__other__">Others (please specify)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="col-md-4" id="skill_other_wrap" style="display:none;">
+                    <label class="pds-label">Specify Skill</label>
+                    <input class="pds-input" type="text" id="skill_other_input" placeholder="Type your skill here…">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="pds-btn w-100" onclick="submitSkill()">
+                        <i class="fa-solid fa-plus me-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            <!-- hidden field that actually gets submitted -->
+            <input type="hidden" id="skill_name_final" name="skill_name">
+        </form>
+    </div>
+
+    <!-- V. EMERGENCY CONTACT -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-phone me-2"></i>V. EMERGENCY CONTACT</h4>
+        <form method="post" action="{% url 'pds-save-emergency' %}">
+            {% csrf_token %}
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="pds-label">Full Name *</label>
+                    <input class="pds-input" type="text" name="emergency_name" value="{{ profile.emergency_name }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Relationship *</label>
+                    <input class="pds-input" type="text" name="emergency_relationship" value="{{ profile.emergency_relationship }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Phone Number *</label>
+                    <input class="pds-input" type="text" name="emergency_phone" value="{{ profile.emergency_phone }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="pds-label">Address</label>
+                    <input class="pds-input" type="text" name="emergency_address" value="{{ profile.emergency_address }}">
+                </div>
+            </div>
+            <button type="submit" class="pds-btn mt-2">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Save Emergency Contact
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+(function () {
+    "use strict";
+
+    const BASE = "https://psgc.gitlab.io/api";
+    let cachedProvinces = null;
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // COMPLETE PHILIPPINES ZIP CODE TABLE (by city/municipality name)
+    // Sources: Philippine Postal Corporation official ZIP code directory
+    // Keys are lowercase; "city of X" variants included for PSGC API names.
+    // ─────────────────────────────────────────────────────────────────────────
+    const ZIP_BY_NAME = {
+
+        // ── NCR / METRO MANILA ──────────────────────────────────────────────
+        'manila': '1000', 'city of manila': '1000',
+        'binondo': '1006', 'ermita': '1000', 'intramuros': '1002',
+        'malate': '1004', 'paco': '1007', 'pandacan': '1011',
+        'port area': '1018', 'quiapo': '1001', 'sampaloc': '1008',
+        'san andres': '1015', 'san miguel': '1005', 'san nicolas': '1010',
+        'santa ana': '1009', 'santa cruz': '1003', 'santa mesa': '1016',
+        'tondo': '1012',
+        'quezon city': '1100', 'city of quezon': '1100',
+        'caloocan': '1400', 'city of caloocan': '1400',
+        'las piñas': '1740', 'las pinas': '1740', 'city of las piñas': '1740', 'city of las pinas': '1740',
+        'makati': '1200', 'city of makati': '1200',
+        'malabon': '1470', 'city of malabon': '1470',
+        'mandaluyong': '1550', 'city of mandaluyong': '1550',
+        'marikina': '1800', 'city of marikina': '1800',
+        'muntinlupa': '1770', 'city of muntinlupa': '1770',
+        'navotas': '1485', 'city of navotas': '1485',
+        'parañaque': '1700', 'paranaque': '1700', 'city of parañaque': '1700', 'city of paranaque': '1700',
+        'pasay': '1300', 'city of pasay': '1300',
+        'pasig': '1600', 'city of pasig': '1600',
+        'pateros': '1620',
+        'san juan': '1500', 'city of san juan': '1500',
+        'taguig': '1630', 'city of taguig': '1630',
+        'valenzuela': '1440', 'city of valenzuela': '1440',
+
+        // ── REGION I – ILOCOS REGION ─────────────────────────────────────────
+        // Ilocos Norte
+        'laoag': '2900', 'city of laoag': '2900',
+        'adams': '2919', 'bacarra': '2916', 'badoc': '2904',
+        'bangui': '2920', 'banna': '2914', 'burgos': '2922',
+        'carasi': '2907', 'currimao': '2903', 'dingras': '2911',
+        'dumalneg': '2921', 'marcos': '2910', 'nueva era': '2912',
+        'pagudpud': '2923', 'paoay': '2902', 'pasuquin': '2915',
+        'piddig': '2913', 'pinili': '2906', 'san nicolas': '2901',
+        'sarrat': '2908', 'solsona': '2909', 'vintar': '2917',
+        // Ilocos Sur
+        'vigan': '2700', 'city of vigan': '2700',
+        'alilem': '2727', 'banayoyo': '2725', 'bantay': '2727',
+        'burgos': '2726', 'cabugao': '2727', 'candon': '2710', 'city of candon': '2710',
+        'caoayan': '2700', 'cervantes': '2728', 'galimuyod': '2727',
+        'gregorio del pilar': '2727', 'lidlidda': '2727', 'magsingal': '2703',
+        'nagbukel': '2727', 'narvacan': '2704', 'quirino': '2727',
+        'salcedo': '2727', 'san emilio': '2727', 'san esteban': '2718',
+        'san ildefonso': '2727', 'san juan': '2727', 'san vicente': '2706',
+        'santa': '2727', 'santa catalina': '2727', 'santa cruz': '2727',
+        'santa lucia': '2707', 'santa maria': '2727', 'santiago': '2727',
+        'santo domingo': '2704', 'sigay': '2727', 'sinait': '2727',
+        'sugpon': '2727', 'suyo': '2727', 'tagudin': '2714',
+        // La Union
+        'san fernando': '2500', 'city of san fernando': '2500',
+        'agoo': '2504', 'aringay': '2503', 'bacnotan': '2515',
+        'bagulin': '2514', 'balaoan': '2512', 'bangar': '2516',
+        'bauang': '2501', 'burgos': '2519', 'caba': '2508',
+        'luna': '2513', 'naguilian': '2505', 'pugo': '2507',
+        'rosario': '2515', 'san gabriel': '2519', 'san juan': '2514',
+        'santo tomas': '2502', 'santol': '2519', 'sudipen': '2519',
+        'tubao': '2509',
+        // Pangasinan
+        'dagupan': '2400', 'city of dagupan': '2400',
+        'san carlos': '2420', 'city of san carlos': '2420',
+        'urdaneta': '2428', 'city of urdaneta': '2428',
+        'alaminos': '2404', 'city of alaminos': '2404',
+        'agno': '2408', 'aguilar': '2415', 'alcala': '2425',
+        'anda': '2405', 'asingan': '2431', 'balungao': '2436',
+        'bani': '2407', 'basista': '2416', 'bautista': '2431',
+        'bayambang': '2423', 'binalonan': '2432', 'binmaley': '2417',
+        'bolinao': '2406', 'bugallon': '2419', 'burgos': '2431',
+        'calasiao': '2418', 'dasol': '2407', 'infanta': '2412',
+        'labrador': '2412', 'laoac': '2436', 'lingayen': '2401',
+        'mabini': '2413', 'malasiqui': '2422', 'manaoag': '2430',
+        'mangaldan': '2432', 'mangatarem': '2413', 'mapandan': '2429',
+        'natividad': '2431', 'pozorrubio': '2435', 'rosales': '2441',
+        'san fabian': '2433', 'san jacinto': '2424', 'san manuel': '2432',
+        'san nicolas': '2431', 'san quintin': '2436', 'santa barbara': '2419',
+        'santa maria': '2440', 'sison': '2434', 'sual': '2415',
+        'tayug': '2445', 'umingan': '2443', 'urbiztondo': '2414',
+        'villasis': '2427',
+
+        // ── REGION II – CAGAYAN VALLEY ───────────────────────────────────────
+        // Cagayan
+        'tuguegarao': '3500', 'city of tuguegarao': '3500',
+        'abulug': '3517', 'alcala': '3508', 'allacapan': '3527',
+        'amulung': '3505', 'aparri': '3515', 'baggao': '3506',
+        'ballesteros': '3516', 'buguey': '3519', 'calayan': '3522',
+        'camalaniugan': '3507', 'claveria': '3521', 'enrile': '3509',
+        'gattaran': '3504', 'gonzaga': '3512', 'iguig': '3508',
+        'lal-lo': '3510', 'lasam': '3506', 'pamplona': '3520',
+        'peñablanca': '3502', 'piat': '3527', 'rizal': '3517',
+        'sanchez-mira': '3518', 'santa ana': '3514', 'santa praxedes': '3521',
+        'santa teresita': '3512', 'santo niño': '3514', 'solana': '3503',
+        'tuao': '3526', 'tuguegarao city': '3500',
+        // Isabela
+        'ilagan': '3300', 'city of ilagan': '3300',
+        'santiago': '3311', 'city of santiago': '3311',
+        'alicia': '3341', 'angadanan': '3325', 'aurora': '3307',
+        'benito soliven': '3329', 'burgos': '3312', 'cabagan': '3328',
+        'cabatuan': '3331', 'cauayan': '3305', 'city of cauayan': '3305',
+        'cordon': '3313', 'delfin albano': '3323', 'dinapigue': '3346',
+        'divilacan': '3347', 'echague': '3309', 'gamu': '3326',
+        'jones': '3306', 'luna': '3324', 'maconacon': '3348',
+        'mallig': '3317', 'naguilian': '3330', 'palanan': '3349',
+        'quezon': '3336', 'quirino': '3316', 'ramon': '3310',
+        'reina mercedes': '3319', 'roxas': '3320', 'san agustin': '3340',
+        'san guillermo': '3344', 'san isidro': '3315', 'san manuel': '3314',
+        'san mariano': '3333', 'san mateo': '3318', 'san pablo': '3337',
+        'santa maria': '3321', 'santo tomas': '3308', 'tumauini': '3327',
+        // Nueva Vizcaya
+        'bayombong': '3700', 'alfuyao': '3703', 'ambaguio': '3702',
+        'aritao': '3704', 'bagabag': '3706', 'bambang': '3702',
+        'diadi': '3713', 'dupax del norte': '3707', 'dupax del sur': '3708',
+        'kasibu': '3709', 'kayapa': '3712', 'quezon': '3714',
+        'santa fe': '3703', 'solano': '3711', 'villaverde': '3713',
+        // Quirino
+        'cabarroguis': '3400', 'aglipay': '3404', 'diffun': '3401',
+        'maddela': '3405', 'nagtipunan': '3406', 'saguday': '3402',
+        // Batanes
+        'basco': '3900', 'itbayat': '3903', 'ivana': '3901',
+        'mahatao': '3901', 'sabtang': '3902', 'uyugan': '3901',
+
+        // ── REGION III – CENTRAL LUZON ───────────────────────────────────────
+        // Aurora
+        'baler': '3200', 'casiguran': '3204', 'dilasag': '3205',
+        'dinalungan': '3206', 'dingalan': '3207', 'dipaculao': '3202',
+        'maria aurora': '3202', 'san luis': '3201',
+        // Bataan
+        'balanga': '2100', 'city of balanga': '2100',
+        'abucay': '2114', 'bagac': '2107', 'dinalupihan': '2110',
+        'hermosa': '2111', 'limay': '2103', 'mariveles': '2105',
+        'morong': '2108', 'orani': '2112', 'orion': '2102',
+        'pilar': '2101', 'samal': '2113',
+        // Bulacan
+        'malolos': '3000', 'city of malolos': '3000',
+        'meycauayan': '3020', 'city of meycauayan': '3020',
+        'san jose del monte': '3023', 'city of san jose del monte': '3023',
+        'angat': '3012', 'balagtas': '3016', 'baliuag': '3006',
+        'bocaue': '3018', 'bulakan': '3017', 'bustos': '3007',
+        'calumpit': '3003', 'doña remedios trinidad': '3009',
+        'dona remedios trinidad': '3009', 'guiguinto': '3015',
+        'hagonoy': '3002', 'marilao': '3019', 'norzagaray': '3013',
+        'obando': '3021', 'pandi': '3014', 'paombong': '3001',
+        'plaridel': '3004', 'pulilan': '3005', 'san ildefonso': '3010',
+        'san rafael': '3008', 'santa maria': '3022',
+        // Nueva Ecija
+        'palayan': '3132', 'city of palayan': '3132',
+        'cabanatuan': '3100', 'city of cabanatuan': '3100',
+        'gapan': '3105', 'city of gapan': '3105',
+        'munoz': '3119', 'science city of munoz': '3119',
+        'aliaga': '3111', 'bongabon': '3128', 'cabiao': '3107',
+        'carranglan': '3123', 'cuyapo': '3117', 'gabaldon': '3131',
+        'general mamerto natividad': '3125', 'general tinio': '3104',
+        'guimba': '3115', 'jaen': '3109', 'laur': '3129',
+        'licab': '3112', 'llanera': '3126', 'lupao': '3122',
+        'nampicuan': '3116', 'pantabangan': '3124', 'peñaranda': '3103',
+        'quezon': '3130', 'rizal': '3127', 'san antonio': '3108',
+        'san isidro': '3106', 'san jose': '3121', 'san leonardo': '3102',
+        'santa rosa': '3101', 'santo domingo': '3110', 'talavera': '3114',
+        'talugtug': '3118', 'zaragoza': '3110',
+        // Pampanga
+        'angeles': '2009', 'city of angeles': '2009',
+        'san fernando': '2000', 'city of san fernando': '2000',
+        'mabalacat': '2010', 'city of mabalacat': '2010',
+        'apalit': '2016', 'arayat': '2012', 'bacolor': '2001',
+        'candaba': '2013', 'floridablanca': '2006', 'guagua': '2003',
+        'lubao': '2005', 'macabebe': '2018', 'magalang': '2011',
+        'masantol': '2017', 'mexico': '2021', 'minalin': '2019',
+        'porac': '2008', 'san luis': '2014', 'san simon': '2015',
+        'santa ana': '2022', 'santa rita': '2002', 'santo tomas': '2020',
+        'sasmuan': '2007',
+        // Tarlac
+        'tarlac': '2300', 'tarlac city': '2300', 'city of tarlac': '2300',
+        'anao': '2310', 'bamban': '2317', 'camiling': '2306',
+        'capas': '2315', 'concepcion': '2316', 'gerona': '2302',
+        'la paz': '2314', 'mayantoc': '2304', 'moncada': '2308',
+        'paniqui': '2307', 'pura': '2312', 'ramos': '2311',
+        'san clemente': '2303', 'san jose': '2318', 'san manuel': '2319',
+        'santa ignacia': '2303', 'victoria': '2313',
+        // Zambales
+        'olongapo': '2200', 'city of olongapo': '2200',
+        'iba': '2201', 'botolan': '2204', 'cabangan': '2203',
+        'candelaria': '2212', 'castillejos': '2208', 'infanta': '2213',
+        'masinloc': '2211', 'palauig': '2210', 'san antonio': '2206',
+        'san felipe': '2204', 'san marcelino': '2207', 'san narciso': '2205',
+        'santa cruz': '2213', 'subic': '2209',
+
+        // ── REGION IV-A – CALABARZON ─────────────────────────────────────────
+        // Batangas
+        'batangas city': '4200', 'city of batangas': '4200',
+        'lipa': '4217', 'city of lipa': '4217',
+        'tanauan': '4232', 'city of tanauan': '4232',
+        'santo tomas': '4234', 'city of santo tomas': '4234',
+        'agoncillo': '4211', 'alitagtag': '4205', 'balayan': '4213',
+        'balete': '4202', 'bauan': '4201', 'calaca': '4212',
+        'calatagan': '4215', 'cuenca': '4204', 'ibaan': '4209',
+        'laurel': '4210', 'lemery': '4214', 'lian': '4216',
+        'lobo': '4229', 'mabini': '4202', 'malvar': '4233',
+        'mataas na kahoy': '4223', 'nasugbu': '4231', 'padre garcia': '4207',
+        'rosario': '4225', 'san jose': '4227', 'san juan': '4226',
+        'san luis': '4208', 'san nicolas': '4235', 'san pascual': '4203',
+        'santa teresita': '4206', 'taal': '4208', 'taysan': '4228',
+        'tingloy': '4229', 'tuy': '4218',
+        // Cavite
+        'cavite city': '4100', 'city of cavite': '4100',
+        'bacoor': '4102', 'city of bacoor': '4102',
+        'dasmariñas': '4114', 'dasmarinas': '4114', 'city of dasmariñas': '4114', 'city of dasmarinas': '4114',
+        'general trias': '4107', 'city of general trias': '4107',
+        'imus': '4103', 'city of imus': '4103',
+        'tagaytay': '4120', 'city of tagaytay': '4120',
+        'trece martires': '4109', 'city of trece martires': '4109',
+        'carmona': '4116', 'general mariano alvarez': '4117',
+        'indang': '4122', 'kawit': '4104', 'magallanes': '4113',
+        'maragondon': '4112', 'mendez': '4123', 'mendez-nuñez': '4123',
+        'naic': '4110', 'noveleta': '4105', 'rosario': '4106',
+        'silang': '4118', 'tanza': '4108', 'ternate': '4111',
+        // Laguna
+        'san pablo': '4000', 'city of san pablo': '4000',
+        'santa cruz': '4009', 'city of santa cruz': '4009',
+        'calamba': '4027', 'city of calamba': '4027',
+        'san pedro': '4023', 'city of san pedro': '4023',
+        'santa rosa': '4026', 'city of santa rosa': '4026',
+        'biñan': '4024', 'binan': '4024', 'city of biñan': '4024', 'city of binan': '4024',
+        'cabuyao': '4025', 'city of cabuyao': '4025',
+        'alaminos': '4001', 'bay': '4033', 'calauan': '4012',
+        'cavinti': '4013', 'famy': '4021', 'kalayaan': '4015',
+        'liliw': '4004', 'los baños': '4030', 'los banos': '4030',
+        'luisiana': '4032', 'lumban': '4014', 'mabitac': '4020',
+        'magdalena': '4007', 'majayjay': '4005', 'nagcarlan': '4002',
+        'paete': '4016', 'pagsanjan': '4008', 'pakil': '4017',
+        'pangil': '4018', 'pila': '4010', 'rizal': '4003',
+        'santa maria': '4022', 'siniloan': '4019', 'victoria': '4011',
+        // Quezon
+        'lucena': '4301', 'city of lucena': '4301',
+        'tayabas': '4327', 'city of tayabas': '4327',
+        'agdangan': '4304', 'alabat': '4333', 'atimonan': '4331',
+        'buenavista': '4314', 'burdeos': '4340', 'calauag': '4318',
+        'candelaria': '4323', 'catanauan': '4311', 'dolores': '4326',
+        'general luna': '4310', 'general nakar': '4338', 'guinayangan': '4319',
+        'gumaca': '4307', 'infanta': '4336', 'jomalig': '4342',
+        'lopez': '4316', 'lucban': '4328', 'macalelon': '4309',
+        'mauban': '4330', 'mulanay': '4312', 'padre burgos': '4303',
+        'pagbilao': '4302', 'panukulan': '4341', 'patnanungan': '4339',
+        'perez': '4325', 'pitogo': '4308', 'plaridel': '4304',
+        'polillo': '4339', 'quezon': '4332', 'real': '4335',
+        'sampaloc': '4306', 'san andres': '4314', 'san antonio': '4324',
+        'san francisco': '4320', 'san narciso': '4321', 'sariaya': '4322',
+        'sheridan': '4313', 'tiaong': '4325', 'unisan': '4305',
+        // Rizal
+        'antipolo': '1870', 'city of antipolo': '1870',
+        'angono': '1930', 'baras': '1970', 'binangonan': '1940',
+        'cainta': '1900', 'cardona': '1950', 'jalajala': '1990',
+        'morong': '1960', 'pililla': '1910', 'rodriguez': '1860',
+        'montalban': '1860', 'san mateo': '1850', 'tanay': '1980',
+        'taytay': '1920', 'teresa': '1880',
+
+        // ── REGION IV-B – MIMAROPA ───────────────────────────────────────────
+        // Marinduque
+        'boac': '4900', 'buenavista': '4904', 'gasan': '4905',
+        'mogpog': '4901', 'santa cruz': '4903', 'torrijos': '4903',
+        // Occidental Mindoro
+        'mamburao': '5106', 'abra de ilog': '5107', 'calintaan': '5108',
+        'looc': '5109', 'lubang': '5102', 'magsaysay': '5105',
+        'paluan': '5107', 'rizal': '5108', 'sablayan': '5104',
+        'san jose': '5100', 'santa cruz': '5105',
+        // Oriental Mindoro
+        'calapan': '5200', 'city of calapan': '5200',
+        'baco': '5201', 'bansud': '5210', 'bongabong': '5211',
+        'bulalacao': '5214', 'gloria': '5209', 'mansalay': '5213',
+        'naujan': '5204', 'pinamalayan': '5208', 'pola': '5206',
+        'puerto galera': '5203', 'roxas': '5212', 'san teodoro': '5202',
+        'socorro': '5207', 'victoria': '5205',
+        // Palawan
+        'puerto princesa': '5300', 'city of puerto princesa': '5300',
+        'aborlan': '5302', 'agutaya': '5320', 'araceli': '5311',
+        'balabac': '5307', 'bataraza': '5306', 'brooke\'s point': '5305',
+        'brookes point': '5305', 'busuanga': '5317', 'cagayancillo': '5321',
+        'coron': '5316', 'culion': '5315', 'cuyo': '5319',
+        'dumaran': '5312', 'el nido': '5313', 'kalayaan': '5322',
+        'linapacan': '5314', 'magsaysay': '5318', 'narra': '5303',
+        'quezon': '5304', 'rizal': '5309', 'roxas': '5308',
+        'san vicente': '5310', 'sofronio española': '5301', 'taytay': '5318',
+        // Romblon
+        'romblon': '5500', 'alcantara': '5502', 'banton': '5515',
+        'cajidiocan': '5515', 'calatrava': '5507', 'concepcion': '5515',
+        'corcuera': '5515', 'ferrol': '5515', 'looc': '5515',
+        'magdiwang': '5515', 'odiongan': '5505', 'san agustin': '5504',
+        'san andres': '5503', 'san fernando': '5515', 'san jose': '5515',
+        'santa fe': '5501', 'santa maria': '5515',
+
+        // ── REGION V – BICOL ─────────────────────────────────────────────────
+        // Albay
+        'legazpi': '4500', 'city of legazpi': '4500',
+        'ligao': '4504', 'city of ligao': '4504',
+        'tabaco': '4511', 'city of tabaco': '4511',
+        'bacacay': '4509', 'camalig': '4502', 'daraga': '4501',
+        'guinobatan': '4503', 'jovellar': '4512', 'libon': '4506',
+        'malilipot': '4513', 'malinao': '4510', 'manito': '4514',
+        'oas': '4507', 'pio duran': '4508', 'polangui': '4506',
+        'rapu-rapu': '4515', 'santo domingo': '4509', 'tiwi': '4513',
+        // Camarines Norte
+        'daet': '4600', 'basud': '4608', 'capalonga': '4607',
+        'jose panganiban': '4606', 'labo': '4604', 'mercedes': '4605',
+        'paracale': '4603', 'san lorenzo ruiz': '4607', 'san vicente': '4601',
+        'santa elena': '4602', 'talisay': '4609', 'vinzons': '4607',
+        // Camarines Sur
+        'naga': '4400', 'city of naga': '4400',
+        'iriga': '4431', 'city of iriga': '4431',
+        'baao': '4432', 'balatan': '4415', 'bato': '4413',
+        'bombon': '4413', 'buhi': '4433', 'bula': '4416',
+        'cabusao': '4416', 'calabanga': '4405', 'camaligan': '4401',
+        'canaman': '4402', 'caramoan': '4426', 'del gallego': '4418',
+        'gainza': '4403', 'garchitorena': '4427', 'goa': '4422',
+        'lagonoy': '4425', 'libmanan': '4407', 'lupi': '4412',
+        'magarao': '4403', 'milaor': '4404', 'minalabac': '4408',
+        'nabua': '4434', 'ocampo': '4417', 'pamplona': '4409',
+        'pasacao': '4410', 'pili': '4418', 'presentacion': '4428',
+        'ragay': '4411', 'sagñay': '4424', 'san fernando': '4419',
+        'san jose': '4420', 'sipocot': '4409', 'siruma': '4423',
+        'tigaon': '4421', 'tinambac': '4421',
+        // Catanduanes
+        'virac': '4800', 'bagamanoc': '4806', 'baras': '4802',
+        'bato': '4805', 'caramoran': '4807', 'gigmoto': '4804',
+        'pandan': '4803', 'panganiban': '4806', 'san andres': '4808',
+        'san miguel': '4808', 'viga': '4805',
+        // Masbate
+        'masbate city': '5400', 'city of masbate': '5400',
+        'aroroy': '5401', 'baleno': '5403', 'balud': '5404',
+        'batuan': '5405', 'cataingan': '5406', 'cawayan': '5407',
+        'claveria': '5408', 'dimasalang': '5408', 'esperanza': '5407',
+        'mandaon': '5409', 'milagros': '5401', 'mobo': '5402',
+        'monreal': '5406', 'palanas': '5407', 'pio v. corpuz': '5401',
+        'placer': '5401', 'san fernando': '5401', 'san jacinto': '5410',
+        'san pascual': '5411', 'uson': '5401',
+        // Sorsogon
+        'sorsogon city': '4700', 'city of sorsogon': '4700',
+        'barcelona': '4706', 'bulan': '4706', 'bulusan': '4710',
+        'casiguran': '4706', 'castilla': '4706', 'donsol': '4715',
+        'gubat': '4710', 'irosin': '4707', 'juban': '4705',
+        'magallanes': '4706', 'matnog': '4708', 'pilar': '4706',
+        'prieto diaz': '4706', 'sta. magdalena': '4706', 'santa magdalena': '4706',
+
+        // ── REGION VI – WESTERN VISAYAS ──────────────────────────────────────
+        // Aklan
+        'kalibo': '5600', 'altavas': '5606', 'balete': '5605',
+        'banga': '5601', 'batan': '5607', 'buruanga': '5608',
+        'ibajay': '5609', 'lezo': '5603', 'libacao': '5605',
+        'madalag': '5604', 'makato': '5602', 'malay': '5608',
+        'malinao': '5606', 'nabas': '5608', 'new washington': '5607',
+        'numancia': '5604', 'tangalan': '5607',
+        // Antique
+        'san jose de buenavista': '5700', 'anini-y': '5712',
+        'barbaza': '5706', 'belison': '5706', 'bugasong': '5706',
+        'caluya': '5713', 'culasi': '5709', 'hamtic': '5706',
+        'laua-an': '5706', 'libertad': '5706', 'pandan': '5712',
+        'patnongon': '5705', 'san remigio': '5707', 'sebaste': '5711',
+        'sibalom': '5702', 'tibiao': '5708', 'tobias fornier': '5706',
+        'valderrama': '5706',
+        // Capiz
+        'roxas': '5800', 'roxas city': '5800', 'city of roxas': '5800',
+        'cuartero': '5803', 'dao': '5801', 'dumalag': '5802',
+        'dumarao': '5808', 'ivisan': '5804', 'jamindan': '5810',
+        'ma-ayon': '5811', 'mambusao': '5805', 'panay': '5806',
+        'panitan': '5807', 'pilar': '5809', 'pontevedra': '5805',
+        'president roxas': '5809', 'sapi-an': '5806', 'sigma': '5803',
+        'tapaz': '5812',
+        // Guimaras
+        'jordan': '5045', 'buenavista': '5048', 'nueva valencia': '5047',
+        'san lorenzo': '5046', 'sibunag': '5049',
+        // Iloilo
+        'iloilo city': '5000', 'city of iloilo': '5000',
+        'passi': '5037', 'city of passi': '5037',
+        'ajuy': '5012', 'alimodian': '5009', 'anilao': '5011',
+        'badiangan': '5009', 'balasan': '5021', 'banate': '5013',
+        'barotac nuevo': '5008', 'barotac viejo': '5031',
+        'batad': '5022', 'bingawan': '5031', 'cabatuan': '5011',
+        'calinog': '5036', 'carles': '5019', 'concepcion': '5018',
+        'dingle': '5033', 'dueñas': '5006', 'duenas': '5006',
+        'dumangas': '5006', 'estancia': '5017', 'guimbal': '5022',
+        'igbaras': '5024', 'janiuay': '5034', 'lambunao': '5032',
+        'leganes': '5003', 'lemery': '5037', 'leon': '5026',
+        'maasin': '5012', 'miagao': '5023', 'mina': '5030',
+        'new lucena': '5001', 'oton': '5020', 'pavia': '5001',
+        'pototan': '5008', 'san dionisio': '5015', 'san enrique': '5007',
+        'san joaquin': '5024', 'san miguel': '5030', 'san rafael': '5031',
+        'santa barbara': '5002', 'sara': '5016', 'tigbauan': '5021',
+        'tubungan': '5025', 'zarraga': '5004',
+        // Negros Occidental
+        'bacolod': '6100', 'city of bacolod': '6100',
+        'bago': '6101', 'city of bago': '6101',
+        'cadiz': '6121', 'city of cadiz': '6121',
+        'escalante': '6124', 'city of escalante': '6124',
+        'himamaylan': '6108', 'city of himamaylan': '6108',
+        'kabankalan': '6111', 'city of kabankalan': '6111',
+        'la carlota': '6130', 'city of la carlota': '6130',
+        'sagay': '6122', 'city of sagay': '6122',
+        'silay': '6116', 'city of silay': '6116',
+        'talisay': '6115', 'city of talisay': '6115',
+        'victorias': '6119', 'city of victorias': '6119',
+        'binalbagan': '6107', 'calatrava': '6126', 'candoni': '6110',
+        'cauayan': '6112', 'enrique b. magalona': '6118',
+        'hinigaran': '6106', 'hinoba-an': '6113', 'ilog': '6109',
+        'isabela': '6128', 'la castellana': '6131', 'manapla': '6117',
+        'moises padilla': '6127', 'murcia': '6129', 'pontevedra': '6108',
+        'pulupandan': '6102', 'san carlos': '6127', 'city of san carlos': '6127',
+        'san enrique': '6104', 'toboso': '6126', 'valladolid': '6105',
+
+        // ── REGION VII – CENTRAL VISAYAS ─────────────────────────────────────
+        // Bohol
+        'tagbilaran': '6300', 'city of tagbilaran': '6300',
+        'alburquerque': '6301', 'alicia': '6302', 'anda': '6311',
+        'antequera': '6313', 'baclayon': '6301', 'balilihan': '6312',
+        'batuan': '6318', 'bien unido': '6315', 'bilar': '6317',
+        'buenavista': '6332', 'calape': '6328', 'candijay': '6312',
+        'carmen': '6315', 'catigbian': '6313', 'clarin': '6329',
+        'corella': '6302', 'cortes': '6303', 'dagohoy': '6306',
+        'danao': '6313', 'dauis': '6339', 'dimiao': '6305',
+        'duero': '6310', 'garcia hernandez': '6309', 'getafe': '6333',
+        'guindulman': '6311', 'inabanga': '6323', 'jagna': '6308',
+        'jetafe': '6333', 'la libertad': '6331', 'lila': '6304',
+        'loay': '6306', 'loboc': '6316', 'loon': '6327',
+        'mabini': '6312', 'maribojoc': '6326', 'panglao': '6340',
+        'pilar': '6307', 'pres. carlos p. garcia': '6311',
+        'president carlos p garcia': '6311', 'sagbayan': '6328',
+        'san isidro': '6333', 'san miguel': '6323', 'sevilla': '6313',
+        'sierra bullones': '6311', 'sikatuna': '6302', 'talibon': '6325',
+        'trinidad': '6306', 'tubigon': '6322', 'ubay': '6319',
+        'valencia': '6309',
+        // Cebu
+        'cebu city': '6000', 'city of cebu': '6000',
+        'lapu-lapu': '6015', 'city of lapu-lapu': '6015', 'lapu lapu': '6015',
+        'mandaue': '6014', 'city of mandaue': '6014',
+        'talisay': '6045', 'city of talisay': '6045',
+        'toledo': '6038', 'city of toledo': '6038',
+        'danao': '6004', 'city of danao': '6004',
+        'carcar': '6019', 'city of carcar': '6019',
+        'bogo': '6010', 'city of bogo': '6010',
+        'naga': '6037', 'city of naga': '6037',
+        'alcantara': '6038', 'alcoy': '6038', 'alegria': '6038',
+        'aloguinsan': '6038', 'argao': '6021', 'asturias': '6038',
+        'badian': '6031', 'balamban': '6041', 'bantayan': '6047',
+        'barili': '6036', 'boljoon': '6024', 'borbon': '6008',
+        'carmen': '6005', 'catmon': '6006', 'compostela': '6003',
+        'consolacion': '6001', 'cordova': '6016', 'daanbantayan': '6013',
+        'dalaguete': '6022', 'dumanjug': '6034', 'ginatilan': '6030',
+        'liloan': '6002', 'madridejos': '6049', 'malabuyoc': '6029',
+        'medellin': '6011', 'minglanilla': '6046', 'moalboal': '6032',
+        'oslob': '6025', 'pilar': '6048', 'pinamungajan': '6040',
+        'poro': '6046', 'ronda': '6035', 'samboan': '6028',
+        'san fernando': '6018', 'san francisco': '6048',
+        'san remigio': '6012', 'santa fe': '6048', 'santander': '6027',
+        'sibonga': '6020', 'sogod': '6006', 'tabogon': '6009',
+        'tabuelan': '6038', 'tuburan': '6043', 'tudela': '6046',
+        // Negros Oriental
+        'dumaguete': '6200', 'city of dumaguete': '6200',
+        'bayawan': '6221', 'city of bayawan': '6221',
+        'bais': '6206', 'city of bais': '6206',
+        'canlaon': '6223', 'city of canlaon': '6223',
+        'guihulngan': '6214', 'city of guihulngan': '6214',
+        'tanjay': '6204', 'city of tanjay': '6204',
+        'amlan': '6212', 'ayungon': '6210', 'bacong': '6201',
+        'basay': '6222', 'bindoy': '6209', 'dauin': '6217',
+        'jimalalud': '6211', 'la libertad': '6213', 'mabinay': '6207',
+        'manjuyod': '6208', 'pamplona': '6219', 'san jose': '6215',
+        'santa catalina': '6220', 'siaton': '6218', 'sibulan': '6201',
+        'tayasan': '6210', 'vallehermoso': '6215', 'zamboanguita': '6216',
+        // Siquijor
+        'siquijor': '6225', 'enrique villanueva': '6228', 'larena': '6226',
+        'lazi': '6229', 'maria': '6227', 'san juan': '6227',
+
+        // ── REGION VIII – EASTERN VISAYAS ────────────────────────────────────
+        // Biliran
+        'naval': '6543', 'almeria': '6544', 'biliran': '6543',
+        'cabucgayan': '6548', 'caibiran': '6547', 'culaba': '6545',
+        'kawayan': '6546', 'maripipi': '6549',
+        // Eastern Samar
+        'borongan': '6800', 'city of borongan': '6800',
+        'arteche': '6811', 'balangiga': '6806', 'balangkayan': '6809',
+        'can-avid': '6804', 'dolores': '6805', 'general macarthur': '6808',
+        'giporlos': '6806', 'guiuan': '6809', 'hernani': '6806',
+        'jipapad': '6803', 'lawaan': '6806', 'llorente': '6809',
+        'maslog': '6803', 'maydolong': '6810', 'mercedes': '6809',
+        'oras': '6804', 'quinapondan': '6809', 'salcedo': '6806',
+        'san julian': '6806', 'san policarpo': '6811', 'sulat': '6812',
+        'taft': '6803',
+        // Leyte
+        'tacloban': '6500', 'city of tacloban': '6500',
+        'baybay': '6521', 'city of baybay': '6521',
+        'ormoc': '6541', 'city of ormoc': '6541',
+        'abuyog': '6510', 'alangalang': '6501', 'albuera': '6526',
+        'babatngon': '6506', 'barugo': '6506', 'bato': '6537',
+        'burauen': '6516', 'calubian': '6528', 'capoocan': '6507',
+        'carigara': '6504', 'dagami': '6515', 'dulag': '6514',
+        'hilongos': '6524', 'hindang': '6524', 'inopacan': '6523',
+        'isabel': '6539', 'jaro': '6519', 'javier': '6516',
+        'julita': '6518', 'kananga': '6529', 'la paz': '6520',
+        'leyte': '6529', 'liloan': '6531', 'mac arthur': '6501',
+        'mahaplag': '6511', 'matag-ob': '6531', 'matalom': '6534',
+        'mayorga': '6516', 'merida': '6532', 'palo': '6501',
+        'palompon': '6538', 'pastrana': '6514', 'san isidro': '6518',
+        'san miguel': '6537', 'santa fe': '6537', 'tabango': '6530',
+        'tabontabon': '6513', 'tanauan': '6502', 'tolosa': '6503',
+        'tunga': '6505', 'villaba': '6539',
+        // Northern Samar
+        'catarman': '6400', 'allen': '6407', 'biri': '6408',
+        'bobon': '6410', 'capul': '6408', 'catubig': '6412',
+        'gamay': '6411', 'laoang': '6413', 'lapinig': '6413',
+        'las navas': '6411', 'lavezares': '6409', 'lope de vega': '6406',
+        'mapanas': '6413', 'mondragon': '6408', 'palapag': '6415',
+        'pambujan': '6409', 'rosario': '6413', 'san antonio': '6407',
+        'san isidro': '6413', 'san jose': '6413', 'san roque': '6411',
+        'san vicente': '6406', 'silvino lobos': '6413', 'victoria': '6412',
+        // Samar
+        'catbalogan': '6700', 'city of catbalogan': '6700',
+        'calbayog': '6710', 'city of calbayog': '6710',
+        'almagro': '6708', 'basey': '6714', 'calbiga': '6720',
+        'daram': '6706', 'gandara': '6703', 'hinabangan': '6712',
+        'jiabong': '6714', 'langkawi': '6700', 'lavezares': '6700',
+        'marabut': '6714', 'matuguinao': '6719', 'motiong': '6716',
+        'pagsanghan': '6700', 'paranas': '6717', 'pinabacdao': '6714',
+        'san jorge': '6704', 'san jose de buan': '6700',
+        'san sebastian': '6718', 'santa margarita': '6705',
+        'santa rita': '6709', 'santo niño': '6707', 'tagapul-an': '6706',
+        'talalora': '6707', 'tarangnan': '6704', 'villareal': '6718',
+        'waray': '6700', 'wright': '6718', 'zumarraga': '6706',
+        // Southern Leyte
+        'maasin': '6600', 'city of maasin': '6600',
+        'anahawan': '6609', 'bontoc': '6620', 'hinunangan': '6615',
+        'hinundayan': '6614', 'libagon': '6612', 'liloan': '6619',
+        'limasawa': '6618', 'macrohon': '6607', 'malitbog': '6611',
+        'padre burgos': '6608', 'pintuyan': '6617', 'san francisco': '6610',
+        'san juan': '6616', 'san ricardo': '6613', 'silago': '6606',
+        'sogod': '6607', 'st. bernard': '6621', 'tomas oppus': '6605',
+
+        // ── REGION IX – ZAMBOANGA PENINSULA ─────────────────────────────────
+        // Zamboanga del Norte
+        'dipolog': '7100', 'city of dipolog': '7100',
+        'dapitan': '7101', 'city of dapitan': '7101',
+        'baliguian': '7118', 'godod': '7117', 'gutalac': '7113',
+        'jose dalman': '7115', 'katipunan': '7109', 'la libertad': '7116',
+        'labason': '7114', 'liloy': '7112', 'manukan': '7110',
+        'mutia': '7108', 'piñan': '7107', 'polanco': '7106',
+        'pres. manuel a. roxas': '7105', 'rizal': '7111',
+        'roxas': '7105', 'sergio osmeña sr': '7107', 'siayan': '7118',
+        'sibuco': '7109', 'sibutad': '7113', 'sindangan': '7111',
+        'siocon': '7119', 'sirawai': '7120', 'tampilisan': '7114',
+        // Zamboanga del Sur
+        'pagadian': '7016', 'city of pagadian': '7016',
+        'aurora': '7023', 'bayog': '7018', 'dimataling': '7025',
+        'dinas': '7024', 'dumalinao': '7012', 'dumingag': '7028',
+        'guipos': '7042', 'josefina': '7029', 'kumalarang': '7012',
+        'labangan': '7017', 'lakewood': '7030', 'lapuyan': '7038',
+        'mahayag': '7028', 'margosatubig': '7036', 'midsalip': '7027',
+        'molave': '7023', 'norala': '7028', 'pitogo': '7022',
+        'ramon magsaysay': '7029', 'san miguel': '7029', 'san pablo': '7017',
+        'sominot': '7028', 'tabina': '7039', 'tambulig': '7027',
+        'tukuran': '7020', 'vincenzo sagun': '7028',
+        'zamboanga city': '7000', 'city of zamboanga': '7000',
+        // Zamboanga Sibugay
+        'ipil': '7001', 'alicia': '7019', 'buug': '7009',
+        'diplahan': '7008', 'imelda': '7002', 'kabasalan': '7005',
+        'mabuhay': '7010', 'malangas': '7006', 'naga': '7004',
+        'olutanga': '7011', 'payao': '7007', 'roseller lim': '7015',
+        'siay': '7003', 'talusan': '7013', 'titay': '7014',
+        'tungawan': '7002',
+
+        // ── REGION X – NORTHERN MINDANAO ─────────────────────────────────────
+        // Bukidnon
+        'malaybalay': '8700', 'city of malaybalay': '8700',
+        'valencia': '8709', 'city of valencia': '8709',
+        'baungon': '8707', 'cabanglasan': '8712', 'dangcagan': '8714',
+        'don carlos': '8712', 'impasugong': '8707', 'kadingilan': '8712',
+        'kalilangan': '8714', 'kibawe': '8710', 'kitaotao': '8711',
+        'lantapan': '8715', 'libona': '8706', 'malitbog': '8715',
+        'manolo fortich': '8703', 'maramag': '8716', 'pangantucan': '8714',
+        'quezon': '8709', 'san fernando': '8711', 'sumilao': '8704',
+        'talakag': '8715',
+        // Camiguin
+        'mambajao': '9100', 'catarman': '9104', 'guinsiliban': '9102',
+        'mahinog': '9101', 'sagay': '9103',
+        // Lanao del Norte
+        'iligan': '9200', 'city of iligan': '9200',
+        'bacolod': '9211', 'baloi': '9207', 'baroy': '9210',
+        'kapatagan': '9217', 'kauswagan': '9214', 'kolambugan': '9209',
+        'lala': '9213', 'linamon': '9205', 'magsaysay': '9206',
+        'maigo': '9204', 'matungao': '9208', 'munai': '9217',
+        'nunungan': '9217', 'pantao ragat': '9217', 'pantar': '9217',
+        'poona piagapo': '9217', 'salvador': '9217', 'sapad': '9217',
+        'sultan naga dimaporo': '9217', 'tagoloan': '9207',
+        'tangcal': '9217', 'tubod': '9212',
+        // Misamis Occidental
+        'oroquieta': '7207', 'city of oroquieta': '7207',
+        'ozamiz': '7200', 'city of ozamiz': '7200',
+        'tangub': '7214', 'city of tangub': '7214',
+        'aloran': '7209', 'baliangao': '7208', 'bonifacio': '7211',
+        'calamba': '7212', 'clarin': '7209', 'concepcion': '7207',
+        'don victoriano chiongbian': '7211', 'jimenez': '7210',
+        'lopez jaena': '7215', 'panaon': '7210', 'plaridel': '7211',
+        'sapang dalaga': '7211', 'sinacaban': '7209', 'tudela': '7213',
+        // Misamis Oriental
+        'cagayan de oro': '9000', 'city of cagayan de oro': '9000',
+        'el salvador': '9017', 'city of el salvador': '9017',
+        'gingoog': '9014', 'city of gingoog': '9014',
+        'alubijid': '9003', 'balingasag': '9005', 'balingoan': '9007',
+        'binuangan': '9008', 'claveria': '9004', 'gitagum': '9003',
+        'initao': '9003', 'jasaan': '9003', 'kinoguitan': '9009',
+        'lagonglong': '9008', 'laguindingan': '9019', 'libertad': '9020',
+        'lugait': '9018', 'magsaysay': '9003', 'manticao': '9018',
+        'medina': '9011', 'naawan': '9023', 'opol': '9016',
+        'salay': '9010', 'sugbongcogon': '9009', 'tagoloan': '9001',
+        'talisayan': '9013', 'villanueva': '9001',
+
+        // ── REGION XI – DAVAO ────────────────────────────────────────────────
+        // Davao de Oro (Compostela Valley)
+        'nabunturan': '8800', 'compostela': '8803', 'laak': '8811',
+        'mabini': '8816', 'maco': '8802', 'maragusan': '8806',
+        'mawab': '8805', 'monkayo': '8807', 'montevista': '8809',
+        'new bataan': '8808', 'pantukan': '8804',
+        // Davao del Norte
+        'tagum': '8100', 'city of tagum': '8100',
+        'panabo': '8105', 'city of panabo': '8105',
+        'samal': '8119', 'island garden city of samal': '8119',
+        'asuncion': '8101', 'braulio e. dujali': '8105',
+        'carmen': '8107', 'kapalong': '8113', 'new corella': '8103',
+        'san isidro': '8109', 'santo tomas': '8112',
+        'talaingod': '8116',
+        // Davao del Sur
+        'digos': '8002', 'city of digos': '8002',
+        'bansalan': '8005', 'davao city': '8000', 'city of davao': '8000',
+        'hagonoy': '8006', 'kiblawan': '8008', 'magsaysay': '8009',
+        'malalag': '8010', 'matanao': '8007', 'padada': '8003',
+        'santa cruz': '8001', 'sulop': '8004',
+        // Davao Occidental
+        'malita': '8012', 'don marcelino': '8013', 'jose abad santos': '8014',
+        'sarangani': '8015', 'sta. maria': '8016', 'santa maria': '8016',
+        // Davao Oriental
+        'mati': '8200', 'city of mati': '8200',
+        'baganga': '8208', 'banaybanay': '8209', 'boston': '8206',
+        'caraga': '8205', 'cateel': '8205', 'governor generoso': '8210',
+        'lupon': '8204', 'manay': '8207', 'san isidro': '8201',
+        'tarragona': '8203',
+
+        // ── REGION XII – SOCCSKSARGEN ─────────────────────────────────────────
+        // Cotabato
+        'kidapawan': '9400', 'city of kidapawan': '9400',
+        'alamada': '9407', 'aleosan': '9401', 'antipas': '9408',
+        'arakan': '9408', 'banisilan': '9402', 'carmen': '9403',
+        'kabacan': '9404', 'libungan': '9405', 'm\'lang': '9402',
+        'magpet': '9409', 'makilala': '9401', 'matalam': '9403',
+        'midsayap': '9410', 'mlang': '9402', 'munai': '9402',
+        'pigkawayan': '9405', 'pikit': '9410', 'president roxas': '9406',
+        'tulunan': '9408',
+        // Sarangani
+        'alabel': '9501', 'glan': '9508', 'kiamba': '9507',
+        'maasim': '9503', 'maitum': '9509', 'malapatan': '9508',
+        'malungon': '9506',
+        // South Cotabato
+        'koronadal': '9506', 'city of koronadal': '9506',
+        'general santos': '9500', 'city of general santos': '9500',
+        'banga': '9514', 'lake sebu': '9504', 'norala': '9513',
+        'polomolok': '9504', 'santo niño': '9516', 'surallah': '9512',
+        't\'boli': '9503', 'tboli': '9503', 'tampakan': '9517',
+        'tantangan': '9511', 'tupi': '9505',
+        // Sultan Kudarat
+        'isulan': '9805', 'bagumbayan': '9807', 'columbio': '9806',
+        'esperanza': '9807', 'kalamansig': '9810', 'lambayong': '9808',
+        'lebak': '9809', 'lutayan': '9806', 'palimbang': '9807',
+        'president quirino': '9806', 'sen. ninoy aquino': '9809',
+        'tacurong': '9800', 'city of tacurong': '9800',
+
+        // ── REGION XIII – CARAGA ─────────────────────────────────────────────
+        // Agusan del Norte
+        'butuan': '8600', 'city of butuan': '8600',
+        'cabadbaran': '8605', 'city of cabadbaran': '8605',
+        'buenavista': '8601', 'carmen': '8615', 'jabonga': '8611',
+        'kitcharao': '8612', 'las nieves': '8607', 'magallanes': '8613',
+        'nasipit': '8602', 'remedios t. romualdez': '8612',
+        'santiago': '8608', 'tubay': '8610',
+        // Agusan del Sur
+        'prosperidad': '8500', 'bayugan': '8502', 'city of bayugan': '8502',
+        'bunawan': '8506', 'esperanza': '8503', 'la paz': '8505',
+        'loreto': '8507', 'rosario': '8510', 'san francisco': '8501',
+        'san luis': '8509', 'santa josefa': '8506', 'talacogon': '8511',
+        'trento': '8507', 'veruela': '8512',
+        // Dinagat Islands
+        'san jose': '8426', 'basilisa': '8422', 'cagdianao': '8423',
+        'dinagat': '8426', 'libjo': '8424', 'loreto': '8425',
+        'tubajon': '8423',
+        // Surigao del Norte
+        'surigao': '8400', 'city of surigao': '8400',
+        'alegria': '8415', 'bacuag': '8405', 'burgos': '8414',
+        'claver': '8406', 'dapa': '8417', 'del carmen': '8418',
+        'general luna': '8419', 'gigaquit': '8411', 'hayanggabon': '8406',
+        'mainit': '8408', 'malimono': '8407', 'pilar': '8418',
+        'placer': '8408', 'san benito': '8419', 'san francisco': '8410',
+        'san isidro': '8419', 'santa monica': '8419', 'sison': '8408',
+        'socorro': '8419', 'tagana-an': '8409', 'tubod': '8413',
+        // Surigao del Sur
+        'tandag': '8300', 'city of tandag': '8300',
+        'bislig': '8311', 'city of bislig': '8311',
+        'barobo': '8305', 'bayabas': '8308', 'cagwait': '8307',
+        'cantilan': '8314', 'carmen': '8315', 'carrascal': '8313',
+        'cortes': '8304', 'hinatuan': '8309', 'lanuza': '8316',
+        'lianga': '8306', 'lingig': '8311', 'madrid': '8316',
+        'marihatag': '8318', 'san agustin': '8318', 'san miguel': '8303',
+        'tagbina': '8306', 'tago': '8307', 'tubod': '8316',
+
+        // ── BARMM – BANGSAMORO ────────────────────────────────────────────────
+        // Basilan
+        'isabela city': '7300', 'city of isabela': '7300',
+        'lamitan': '7302', 'city of lamitan': '7302',
+        'akbar': '7303', 'al-barka': '7305', 'hadji mohammad ajul': '7304',
+        'hadji muhtamad': '7303', 'lantawan': '7304', 'maluso': '7303',
+        'sumisip': '7305', 'tipo-tipo': '7301', 'tuburan': '7304',
+        'ungkaya pukan': '7305',
+        // Lanao del Sur
+        'marawi': '9700', 'city of marawi': '9700',
+        'bacolod-kalawi': '9702', 'balabagan': '9706', 'balindong': '9707',
+        'bayang': '9700', 'binidayan': '9707', 'buadiposo-buntong': '9704',
+        'bubong': '9703', 'bumbaran': '9706', 'butig': '9706',
+        'calanogas': '9706', 'lumba-bayabao': '9706', 'lumbaca-unayan': '9706',
+        'marantao': '9701', 'masiu': '9706', 'mulondo': '9704',
+        'pagayawan': '9706', 'piagapo': '9703', 'picong': '9706',
+        'poona bayabao': '9706', 'pualas': '9703', 'tagoloan ii': '9706',
+        'tamparan': '9706', 'taraka': '9706', 'tubaran': '9706',
+        'tugaya': '9706', 'wao': '9706',
+        // Maguindanao del Norte
+        'cotabato city': '9600', 'city of cotabato': '9600',
+        'datu odin sinsuat': '9608', 'kabuntalan': '9608',
+        'matanog': '9608', 'parang': '9609', 'sultan kudarat': '9608',
+        'sultan mastura': '9608', 'upi': '9608',
+        // Maguindanao del Sur
+        'buluan': '9616', 'datu paglas': '9614', 'datu piang': '9611',
+        'datu salibo': '9616', 'datu unsay': '9614', 'gen. s.k. pendatun': '9614',
+        'guindulungan': '9616', 'mamasapano': '9616', 'mangudadatu': '9615',
+        'pagalungan': '9616', 'paglat': '9615', 'pandag': '9616',
+        'rajah buayan': '9616', 'shariff aguak': '9604', 'south upi': '9608',
+        // Sulu
+        'jolo': '7400', 'hadji panglima tahil': '7406', 'indanan': '7401',
+        'kalingalan caluang': '7413', 'luba': '7412', 'lugus': '7413',
+        'luuk': '7407', 'maimbung': '7405', 'old panamao': '7408',
+        'omar': '7413', 'pandami': '7413', 'pata': '7406',
+        'patikul': '7402', 'siasi': '7410', 'talipao': '7403',
+        'tapul': '7409', 'tongkil': '7411',
+        // Tawi-Tawi
+        'bongao': '7500', 'languyan': '7505', 'mapun': '7503',
+        'panglima sugala': '7502', 'sapa-sapa': '7503', 'sibutu': '7504',
+        'simunul': '7501', 'sitangkai': '7504', 'south ubian': '7502',
+        'tandubas': '7504', 'turtle islands': '7505',
+
+        // ── CAR – CORDILLERA ──────────────────────────────────────────────────
+        // Abra
+        'bangued': '2800', 'boliney': '2815', 'bucay': '2806',
+        'bucloc': '2815', 'daguioman': '2815', 'danglas': '2815',
+        'dolores': '2806', 'la paz': '2807', 'lacub': '2815',
+        'lagangilang': '2807', 'lagayan': '2807', 'langiden': '2815',
+        'licuan-baay': '2815', 'luba': '2815', 'malibcong': '2815',
+        'manabo': '2810', 'peñarrubia': '2815', 'pidigan': '2803',
+        'pilar': '2802', 'sallapadan': '2815', 'san isidro': '2815',
+        'san juan': '2804', 'san quintin': '2815', 'tayum': '2801',
+        'tineg': '2815', 'tubo': '2815', 'villaviciosa': '2815',
+        // Apayao
+        'luna': '3807', 'calanasan': '3806', 'conner': '3806',
+        'flora': '3803', 'kabugao': '3806', 'pudtol': '3807',
+        'santa marcela': '3806',
+        // Benguet
+        'la trinidad': '2601', 'atok': '2612', 'bakun': '2612',
+        'bokod': '2611', 'buguias': '2607', 'itogon': '2604',
+        'kabayan': '2612', 'kapangan': '2612', 'kibungan': '2612',
+        'la trinidad benguet': '2601', 'mankayan': '2608',
+        'sablan': '2612', 'tuba': '2603', 'tublay': '2605',
+        // Baguio
+        'baguio': '2600', 'city of baguio': '2600',
+        // Ifugao
+        'lagawe': '3700', 'aguinaldo': '3706', 'alfonso lista': '3702',
+        'asipulo': '3712', 'banaue': '3701', 'hingyon': '3704',
+        'hungduan': '3705', 'kiangan': '3706', 'lamut': '3706',
+        'mayoyao': '3703', 'tinoc': '3709',
+        // Kalinga
+        'tabuk': '3800', 'city of tabuk': '3800',
+        'balbalan': '3806', 'lubuagan': '3802', 'pasil': '3806',
+        'pinukpuk': '3801', 'rizal': '3806', 'tanudan': '3806',
+        'tinglayan': '3806',
+        // Mountain Province
+        'bontoc': '2616', 'barlig': '2617', 'bauko': '2619',
+        'besao': '2619', 'natonin': '2616', 'paracelis': '2616',
+        'sabangan': '2616', 'sadanga': '2616', 'sagada': '2619',
+        'tadian': '2616',
+
+        // ── NCR ADDITIONAL POSTAL CODES BY DISTRICT ───────────────────────────
+        // Quezon City districts
+        'balintawak': '1106', 'bagong pag-asa': '1105', 'diliman': '1101',
+        'cubao': '1109', 'project 4': '1109', 'project 6': '1110',
+        'project 7': '1105', 'project 8': '1106',
+        'commonwealth': '1121', 'batasan hills': '1126',
+        'novaliches': '1117', 'fairview': '1118',
+        'kamuning': '1103', 'south triangle': '1103',
+        'east avenue': '1104', 'west avenue': '1104',
+        'vasra': '1128', 'new era': '1107',
+        // Makati districts
+        'bel-air': '1209', 'bel air': '1209', 'bangkal': '1233',
+        'carmona': '1204', 'dasmariñas village': '1221',
+        'forbes park': '1221', 'guadalupe nuevo': '1212',
+        'guadalupe viejo': '1212', 'magallanes': '1232',
+        'olympia': '1207', 'palanan': '1235', 'pio del pilar': '1230',
+        'poblacion makati': '1210', 'rockwell': '1210',
+        'salcedo': '1227', 'san antonio': '1203',
+        'san isidro': '1234', 'santa cruz makati': '1203',
+        'singkamas': '1208', 'tejeros': '1232', 'urdaneta': '1226',
+        'west rembo': '1215',
+        // Pasig
+        'bagong ilog': '1600', 'kapitolyo': '1603',
+        'oranbo': '1600', 'ortigas center': '1605',
+        'rosario pasig': '1609', 'san antonio pasig': '1601',
+        'santa lucia pasig': '1600',
+        // Mandaluyong
+        'barangka': '1550', 'hagdang-bato': '1550', 'mauway': '1550',
+        'plainview': '1550', 'vergara': '1550',
+        // Marikina
+        'concepcion uno': '1809', 'industrial valley': '1800',
+        'nangka': '1800', 'parang': '1809', 'san roque marikina': '1800',
+        'santos marikina': '1800',
+    };
+
+    function getZipByName(cityName) {
+        if (!cityName) return null;
+        const key = cityName.trim().toLowerCase();
+        // Exact match first
+        if (ZIP_BY_NAME[key]) return ZIP_BY_NAME[key];
+        // Strip "city of " prefix and try again
+        const stripped = key.replace(/^city of\s+/i, '');
+        return ZIP_BY_NAME[stripped] || null;
+    }
+
+    const SECTIONS = {
+        res: {
+            province:   document.getElementById("res_province"),
+            city:       document.getElementById("res_city"),
+            barangay:   document.getElementById("res_barangay"),
+            zip:        document.getElementById("res_zip"),
+            provLoader: document.getElementById("res-province-loader"),
+            cityLoader: document.getElementById("res-city-loader"),
+            bgyLoader:  document.getElementById("res-barangay-loader"),
+        },
+        per: {
+            province:   document.getElementById("per_province"),
+            city:       document.getElementById("per_city"),
+            barangay:   document.getElementById("per_barangay"),
+            zip:        document.getElementById("per_zip"),
+            provLoader: document.getElementById("per-province-loader"),
+            cityLoader: document.getElementById("per-city-loader"),
+            bgyLoader:  document.getElementById("per-barangay-loader"),
+        }
+    };
+
+    async function fetchJSON(url) {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(r.status + " " + url);
+        return r.json();
+    }
+
+    function showLoader(el) { if (el) el.classList.add("visible"); }
+    function hideLoader(el) { if (el) el.classList.remove("visible"); }
+
+    function getSelectedText(selectEl) {
+        const idx = selectEl.selectedIndex;
+        if (idx < 0) return "";
+        const opt = selectEl.options[idx];
+        return (opt && opt.value) ? opt.text : "";
+    }
+
+    function setHidden(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.value = val || "";
+    }
+
+    function flashZip(zipEl) {
+        zipEl.classList.remove("zip-autofilled");
+        void zipEl.offsetWidth;
+        zipEl.classList.add("zip-autofilled");
+    }
+
+    function applyZip(section, zip) {
+        if (zip) {
+            section.zip.value = zip;
+            flashZip(section.zip);
+        }
+    }
+
+    function fillZipFromName(section) {
+        const cityName = getSelectedText(section.city);
+        const zip = getZipByName(cityName);
+        if (zip) {
+            applyZip(section, zip);
+            return true;
+        }
+        return false;
+    }
+
+    function populateSelect(selectEl, items, valueKey, labelKey) {
+        const currentVal  = selectEl.value;
+        const currentText = selectEl.options[selectEl.selectedIndex]?.text || "";
+        const placeholder = selectEl.options[0]?.value === "" ? selectEl.options[0].text : "Select…";
+
+        selectEl.innerHTML = `<option value="">${placeholder}</option>`;
+
+        const sorted = [...items].sort((a, b) => a[labelKey].localeCompare(b[labelKey]));
+        sorted.forEach(item => {
+            const opt = document.createElement("option");
+            opt.value = item[valueKey];
+            opt.text  = item[labelKey];
+            if (item.zipCode) opt.dataset.zip = item.zipCode;
+            if (item[valueKey] === currentVal) opt.selected = true;
+            selectEl.appendChild(opt);
+        });
+
+        if (currentVal && !selectEl.value) {
+            const fallback = document.createElement("option");
+            fallback.value    = currentVal;
+            fallback.text     = currentText;
+            fallback.selected = true;
+            selectEl.appendChild(fallback);
+        }
+
+        selectEl.disabled = false;
+        refreshSelect2(selectEl);
+    }
+
+    function clearSelect(selectEl, placeholder, disable = true) {
+        selectEl.innerHTML = `<option value="">${placeholder}</option>`;
+        selectEl.disabled = disable;
+        refreshSelect2(selectEl);
+    }
+
+    function refreshSelect2(selectEl) {
+        if (window.$ && $(selectEl).data("select2")) {
+            $(selectEl).trigger("change.select2");
+        }
+    }
+
+    async function loadProvinces(section) {
+        showLoader(section.provLoader);
+        section.province.disabled = true;
+        try {
+            if (!cachedProvinces) {
+                cachedProvinces = await fetchJSON(`${BASE}/provinces/`);
+            }
+            populateSelect(section.province, cachedProvinces, "code", "name");
+        } catch (err) {
+            console.error("Province load failed:", err);
+            section.province.options[0].text = "Error — reload page";
+            section.province.disabled = false;
+        } finally {
+            hideLoader(section.provLoader);
+        }
+    }
+
+    async function loadCities(section, provinceCode, keepExisting = false) {
+        if (!keepExisting) {
+            clearSelect(section.city,     "Select Municipality/City");
+            clearSelect(section.barangay, "Select Barangay");
+            section.zip.value = "";
+        }
+        showLoader(section.cityLoader);
+        section.city.disabled = true;
+        try {
+            const [muns, cities] = await Promise.all([
+                fetchJSON(`${BASE}/provinces/${provinceCode}/municipalities/`).catch(() => []),
+                fetchJSON(`${BASE}/provinces/${provinceCode}/cities/`).catch(() => []),
+            ]);
+            populateSelect(section.city, [...muns, ...cities], "code", "name");
+        } catch (err) {
+            console.error("City load failed:", err);
+            section.city.options[0].text = "Error loading";
+            section.city.disabled = false;
+        } finally {
+            hideLoader(section.cityLoader);
+        }
+    }
+
+    async function loadBarangays(section, cityCode, keepExisting = false) {
+        if (!keepExisting) {
+            clearSelect(section.barangay, "Select Barangay");
+        }
+        showLoader(section.bgyLoader);
+        section.barangay.disabled = true;
+        try {
+            let data = await fetchJSON(`${BASE}/municipalities/${cityCode}/barangays/`).catch(() => null);
+            if (!data) data = await fetchJSON(`${BASE}/cities/${cityCode}/barangays/`).catch(() => []);
+            populateSelect(section.barangay, data, "code", "name");
+        } catch (err) {
+            console.error("Barangay load failed:", err);
+            section.barangay.options[0].text = "Error loading";
+            section.barangay.disabled = false;
+        } finally {
+            hideLoader(section.bgyLoader);
+        }
+    }
+
+    function initSelect2ForSection(section, prefix) {
+        if (!window.$ || !$.fn.select2) return;
+        const commonOpts = { allowClear: true, width: "100%", dropdownAutoWidth: false };
+        $(`#${prefix}_province`).select2({ ...commonOpts, placeholder: "Select Province" });
+        $(`#${prefix}_city`).select2({ ...commonOpts, placeholder: "Select Municipality/City" });
+        $(`#${prefix}_barangay`).select2({ ...commonOpts, placeholder: "Select Barangay" });
+    }
+
+    function wireSection(section, prefix) {
+        const useS2 = window.$ && $.fn.select2;
+
+        function onProvinceChange() {
+            const code = section.province.value;
+            const name = getSelectedText(section.province);
+            setHidden(`${prefix}_province_name_input`, name);
+            setHidden(`${prefix}_city_name_input`, "");
+            setHidden(`${prefix}_barangay_name_input`, "");
+            clearSelect(section.city,     "Select Municipality/City");
+            clearSelect(section.barangay, "Select Barangay");
+            section.zip.value = "";
+            if (code) loadCities(section, code);
+        }
+
+        function onCityChange() {
+            const code = section.city.value;
+            const name = getSelectedText(section.city);
+            setHidden(`${prefix}_city_name_input`, name);
+            setHidden(`${prefix}_barangay_name_input`, "");
+            clearSelect(section.barangay, "Select Barangay");
+            section.zip.value = "";
+            if (code) {
+                loadBarangays(section, code);
+                if (!fillZipFromName(section)) {
+                    fetchZipFromAPI(section, code);
+                }
+            }
+        }
+
+        function onBarangayChange() {
+            const name = getSelectedText(section.barangay);
+            setHidden(`${prefix}_barangay_name_input`, name);
+        }
+
+        if (useS2) {
+            $(`#${prefix}_province`).on("change", onProvinceChange);
+            $(`#${prefix}_city`).on("change", onCityChange);
+            $(`#${prefix}_barangay`).on("change", onBarangayChange);
+        } else {
+            section.province.addEventListener("change", onProvinceChange);
+            section.city.addEventListener("change", onCityChange);
+            section.barangay.addEventListener("change", onBarangayChange);
+        }
+    }
+
+    async function fetchZipFromAPI(section, cityCode) {
+        try {
+            for (const type of ['municipalities', 'cities']) {
+                try {
+                    const r = await fetch(`https://psgc.cloud/api/${type}/${cityCode}`);
+                    if (r.ok) {
+                        const d = await r.json();
+                        const zip = d?.zip_code || d?.zipCode || null;
+                        if (zip) { applyZip(section, zip); return; }
+                    }
+                } catch(e) {}
+            }
+            for (const type of ['municipalities', 'cities']) {
+                try {
+                    const d = await fetchJSON(`${BASE}/${type}/${cityCode}/`);
+                    const zip = d?.zipCode || d?.zip_code || null;
+                    if (zip) { applyZip(section, zip); return; }
+                } catch(e) {}
+            }
+        } catch(e) {
+            console.error("ZIP API fallback failed:", e);
+        }
+    }
+
+    async function bootSection(section, prefix) {
+        section.zip.readOnly = true;
+
+        const savedProvince = section.province.value;
+        const savedCity     = section.city.value;
+
+        initSelect2ForSection(section, prefix);
+        await loadProvinces(section);
+
+        if (savedProvince) {
+            await loadCities(section, savedProvince, true);
+        }
+
+        if (savedCity) {
+            await loadBarangays(section, savedCity, true);
+            if (!fillZipFromName(section)) {
+                await fetchZipFromAPI(section, savedCity);
+            }
+        }
+
+        const provInp = document.getElementById(`${prefix}_province_name_input`);
+        const cityInp = document.getElementById(`${prefix}_city_name_input`);
+        const bgyInp  = document.getElementById(`${prefix}_barangay_name_input`);
+
+        if (provInp && !provInp.value) provInp.value = getSelectedText(section.province);
+        if (cityInp && !cityInp.value) cityInp.value = getSelectedText(section.city);
+        if (bgyInp  && !bgyInp.value)  bgyInp.value  = getSelectedText(section.barangay);
+
+        wireSection(section, prefix);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        bootSection(SECTIONS.res, "res");
+        bootSection(SECTIONS.per, "per");
+    });
+
+})();
+
+function togglePermanent(cb) {
+    document.getElementById("permanent-fields").style.display = cb.checked ? "none" : "block";
+}
+
+function handleSkillDropdown(sel) {
+    const wrap  = document.getElementById("skill_other_wrap");
+    const input = document.getElementById("skill_other_input");
+    if (sel.value === "__other__") {
+        wrap.style.display = "block";
+        input.focus();
+    } else {
+        wrap.style.display = "none";
+        input.value = "";
+    }
+}
+
+function submitSkill() {
+    const dropdown = document.getElementById("skill_dropdown");
+    const otherInput = document.getElementById("skill_other_input");
+    const finalField = document.getElementById("skill_name_final");
+
+    let skillValue = "";
+
+    if (dropdown.value === "__other__") {
+        skillValue = otherInput.value.trim();
+        if (!skillValue) {
+            otherInput.focus();
+            otherInput.style.borderColor = "#e91e8c";
+            otherInput.placeholder = "Please type your skill!";
+            return;
+        }
+    } else if (dropdown.value === "") {
+        dropdown.style.borderColor = "#e91e8c";
+        setTimeout(() => dropdown.style.borderColor = "", 1500);
+        return;
+    } else {
+        skillValue = dropdown.value;
+    }
+
+    finalField.value = skillValue;
+    dropdown.closest("form").submit();
+}
+</script>
+{% endblock %}

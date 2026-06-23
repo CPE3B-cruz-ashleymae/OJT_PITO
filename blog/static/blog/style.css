@@ -1,0 +1,50 @@
+/* ============================================================
+   style.css — DevBlog
+   ============================================================ */
+
+/* ── Layout ──────────────────────────────────────────────────── */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+    border-bottom: #e8491d 3px solid;
+}
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+    overflow: hidden;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* ── Typography ──────────────────────────────────────────────── */
+h1, h2 {
+    color: #35424a;
+}
+
+/* ── Post preview ────────────────────────────────────────────── */
+.post-preview {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    color: #777;
+    font-size: 0.9rem;
+}

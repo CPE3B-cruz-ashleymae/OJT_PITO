@@ -1,0 +1,284 @@
+{% extends "blog/base.html" %}
+{% load custom_filters %}
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #ffe0eb 0%, #ffc2d4 50%, #ff9abb 100%) !important;
+        min-height: 100vh;
+    }
+    .profile-wrapper { max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
+    .profile-hero {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 30px rgba(209,29,95,0.1);
+        text-align: center;
+    }
+    .profile-hero img {
+        width: 120px; height: 120px; object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #ffc1cc;
+        box-shadow: 0 4px 15px rgba(209,29,95,0.2);
+        margin-bottom: 1rem;
+    }
+    .profile-hero h2 { font-weight: 800; color: #2d2d2d; margin-bottom: 0.2rem; }
+    .profile-hero p { color: #999; font-size: 0.95rem; }
+    .pds-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 30px rgba(209,29,95,0.1);
+    }
+    .pds-section h4 {
+        color: #c2185b;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid #f8bbd0;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    .info-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        color: #880e4f;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+        display: block;
+    }
+    .info-value {
+        font-size: 0.95rem;
+        color: #333;
+        background: #fff0f5;
+        border: 1.5px solid #f48fb1;
+        border-radius: 10px;
+        padding: 0.45rem 0.85rem;
+        display: block;
+        min-height: 38px;
+    }
+    .edu-table th {
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+        color: #c2185b; background: #fce4ec;
+        padding: 0.5rem 0.75rem; text-transform: uppercase;
+    }
+    .edu-table td { padding: 0.5rem 0.75rem; vertical-align: middle; color: #333; }
+    .edu-table .level-label { font-weight: 700; color: #880e4f; }
+    .work-card {
+        background: #fff0f5; border-radius: 10px;
+        padding: 0.75rem 1rem; margin-bottom: 0.6rem;
+        border: 1px solid #f48fb1;
+    }
+    .skill-badge {
+        background: #fce4ec; color: #c2185b;
+        border-radius: 20px; padding: 0.3rem 0.9rem;
+        font-size: 0.85rem; font-weight: 600;
+        margin: 0.2rem; display: inline-block;
+        border: 1px solid #f48fb1;
+    }
+    .btn-back {
+        background: rgba(255,255,255,0.3);
+        color: #fff; border: 1.5px solid rgba(255,255,255,0.6);
+        border-radius: 10px; padding: 0.45rem 1.1rem;
+        font-weight: 600; font-size: 0.9rem;
+        text-decoration: none; transition: background 0.2s;
+        backdrop-filter: blur(4px);
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.45); color: #fff; }
+    .page-title { color: #fff; font-weight: 800; font-size: 1.6rem; text-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .page-subtitle { color: rgba(255,255,255,0.85); }
+    hr { border-color: #f8bbd0; }
+</style>
+
+<div class="profile-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-title"><i class="fa-solid fa-user me-2"></i>{{ viewed_user.username }}'s Profile</h2>
+            <small class="page-subtitle">Viewing public information</small>
+        </div>
+        <a href="{% url 'blog-home' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left me-1"></i>Back to Feed
+        </a>
+    </div>
+
+    <!-- Profile Hero -->
+    <div class="profile-hero">
+        <img src="{{ viewed_user.profile.image.url }}" alt="{{ viewed_user.username }}">
+        <h2>{{ viewed_user.username }}</h2>
+        <p>{{ viewed_user.email }}</p>
+        {% if profile.surname %}
+            <p class="mt-1" style="color:#c2185b;font-weight:600;">
+                {{ profile.surname }}, {{ profile.first_name }} {{ profile.middle_name }}
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- Personal Information -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-user me-2"></i>I. PERSONAL INFORMATION</h4>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <span class="info-label">Surname</span>
+                <span class="info-value">{{ profile.surname|default:"—" }}</span>
+            </div>
+            <div class="col-md-4">
+                <span class="info-label">First Name</span>
+                <span class="info-value">{{ profile.first_name|default:"—" }}</span>
+            </div>
+            <div class="col-md-4">
+                <span class="info-label">Middle Name</span>
+                <span class="info-value">{{ profile.middle_name|default:"—" }}</span>
+            </div>
+            <div class="col-md-3">
+                <span class="info-label">Age</span>
+                <span class="info-value">{{ profile.age|default:"—" }}</span>
+            </div>
+            <div class="col-md-3">
+                <span class="info-label">Date of Birth</span>
+                <span class="info-value">{{ profile.dob|date:"M d, Y"|default:"—" }}</span>
+            </div>
+            <div class="col-md-3">
+                <span class="info-label">Sex</span>
+                <span class="info-value">{{ profile.sex|default:"—" }}</span>
+            </div>
+            <div class="col-md-3">
+                <span class="info-label">Civil Status</span>
+                <span class="info-value">{{ profile.civil_status|default:"—" }}</span>
+            </div>
+            <div class="col-md-6">
+                <span class="info-label">Place of Birth</span>
+                <span class="info-value">{{ profile.place_of_birth|default:"—" }}</span>
+            </div>
+            <div class="col-md-2">
+                <span class="info-label">Height</span>
+                <span class="info-value">{{ profile.height|default:"—" }}</span>
+            </div>
+            <div class="col-md-2">
+                <span class="info-label">Weight</span>
+                <span class="info-value">{{ profile.weight|default:"—" }}</span>
+            </div>
+            <div class="col-md-2">
+                <span class="info-label">Blood Type</span>
+                <span class="info-value">{{ profile.blood_type|default:"—" }}</span>
+            </div>
+            <div class="col-md-6">
+                <span class="info-label">Citizenship</span>
+                <span class="info-value">{{ profile.citizenship|default:"—" }}</span>
+            </div>
+        </div>
+
+        <hr class="my-3">
+        <p style="font-size:0.9rem;font-weight:700;color:#c2185b;">Residential Address</p>
+        <div class="row g-3">
+            <div class="col-md-12">
+                <span class="info-value">
+                    {% if profile.res_house_no %}{{ profile.res_house_no }}{% endif %}
+                    {% if profile.res_street %} {{ profile.res_street }},{% endif %}
+                    {% if profile.res_subdivision %} {{ profile.res_subdivision }},{% endif %}
+                    {% if profile.res_barangay_name %} {{ profile.res_barangay_name }},{% endif %}
+                    {% if profile.res_city_name %} {{ profile.res_city_name }},{% endif %}
+                    {% if profile.res_province_name %} {{ profile.res_province_name }}{% endif %}
+                    {% if profile.res_zip %} {{ profile.res_zip }}{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <hr class="my-3">
+        <p style="font-size:0.9rem;font-weight:700;color:#c2185b;">Contact</p>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <span class="info-label">Mobile</span>
+                <span class="info-value">{{ profile.mobile_number|default:"—" }}</span>
+            </div>
+            <div class="col-md-4">
+                <span class="info-label">Telephone</span>
+                <span class="info-value">{{ profile.telephone|default:"—" }}</span>
+            </div>
+            <div class="col-md-4">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ profile.email_address|default:"—" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Education -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-graduation-cap me-2"></i>II. EDUCATIONAL BACKGROUND</h4>
+        <table class="edu-table w-100">
+            <thead>
+                <tr>
+                    <th style="width:130px">Level</th>
+                    <th>School</th>
+                    <th>Course/Strand</th>
+                    <th style="width:120px">Year Graduated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for level in education_levels %}
+                <tr>
+                    <td class="level-label">{{ level }}</td>
+                    <td>{{ edu_dict|get_item:level|attr:'school_name'|default:"—" }}</td>
+                    <td>{{ edu_dict|get_item:level|attr:'degree'|default:"—" }}</td>
+                    <td>{{ edu_dict|get_item:level|attr:'year_graduated'|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Work Experience -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-briefcase me-2"></i>III. WORK EXPERIENCE</h4>
+        {% if work_experiences %}
+            {% for work in work_experiences %}
+            <div class="work-card">
+                <strong style="color:#880e4f;">{{ work.position }}</strong> at {{ work.company }}<br>
+                <small class="text-muted">
+                    {{ work.date_from }} &ndash;
+                    {% if work.currently_working %}Present{% else %}{{ work.date_to }}{% endif %}
+                </small>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted" style="font-size:0.9rem;">No work experience added yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Skills -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-star me-2"></i>IV. SKILLS</h4>
+        {% if skills %}
+            {% for skill in skills %}
+            <span class="skill-badge">{{ skill.name }}</span>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted" style="font-size:0.9rem;">No skills added yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Emergency Contact -->
+    <div class="pds-section">
+        <h4><i class="fa-solid fa-phone me-2"></i>V. EMERGENCY CONTACT</h4>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <span class="info-label">Full Name</span>
+                <span class="info-value">{{ profile.emergency_name|default:"—" }}</span>
+            </div>
+            <div class="col-md-6">
+                <span class="info-label">Relationship</span>
+                <span class="info-value">{{ profile.emergency_relationship|default:"—" }}</span>
+            </div>
+            <div class="col-md-6">
+                <span class="info-label">Phone</span>
+                <span class="info-value">{{ profile.emergency_phone|default:"—" }}</span>
+            </div>
+            <div class="col-md-6">
+                <span class="info-label">Address</span>
+                <span class="info-value">{{ profile.emergency_address|default:"—" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,116 +1,260 @@
 {% extends "blog/base.html" %}
 {% block content %}
-<div class="row g-4">
-    
+<style>
+    body {
+	background: linear-gradient(135deg, #ffb6c1 0%, #ff69b4 50%, #ffb6c1 100%) !important;
+        min-height: 100vh;
+    }
+
+    /* Post cards */
+    .post-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.8rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 30px rgba(209, 29, 95, 0.1);
+        border: none;
+        transition: box-shadow 0.2s;
+    }
+    .post-card:hover {
+        box-shadow: 0 12px 40px rgba(209, 29, 95, 0.18);
+    }
+    .post-author {
+        color: #d11d5f;
+        font-weight: 700;
+    }
+    .post-date {
+        color: #bbb;
+        font-size: 0.88rem;
+    }
+    .post-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d2d2d;
+    }
+    .post-content {
+        color: #555;
+        font-size: 0.95rem;
+    }
+    .btn-see-details {
+        background: linear-gradient(135deg, #ff85a8, #d11d5f);
+        color: white !important;
+        border: none;
+        border-radius: 50px;
+        padding: 0.4rem 1.2rem;
+        font-weight: 600;
+        font-size: 0.88rem;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(209, 29, 95, 0.25);
+        text-decoration: none;
+    }
+    .btn-see-details:hover {
+        background: linear-gradient(135deg, #d11d5f, #a0154a);
+        transform: translateY(-1px);
+    }
+    .btn-edit-post {
+        background: white;
+        color: #d11d5f !important;
+        border: 2px solid #ffc1cc;
+        border-radius: 50px;
+        padding: 0.4rem 1.2rem;
+        font-weight: 600;
+        font-size: 0.88rem;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .btn-edit-post:hover {
+        background: #fff0f5;
+        border-color: #d11d5f;
+        transform: translateY(-1px);
+    }
+
+    /* Profile card */
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        box-shadow: 0 8px 30px rgba(209, 29, 95, 0.1);
+        border: none;
+    }
+    .profile-card h4 {
+        font-weight: 800;
+        color: #2d2d2d;
+        margin-bottom: 0.2rem;
+    }
+    .profile-card p {
+        color: #999;
+        font-size: 0.9rem;
+    }
+    .btn-write {
+        background: linear-gradient(135deg, #ff85a8, #d11d5f);
+        color: white !important;
+        border: none;
+        border-radius: 50px;
+        padding: 0.65rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(209, 29, 95, 0.3);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.6rem;
+    }
+    .btn-write:hover {
+        background: linear-gradient(135deg, #d11d5f, #a0154a);
+        transform: translateY(-1px);
+    }
+    .btn-change-profile {
+        background: white;
+        color: #d11d5f !important;
+        border: 2px solid #ffc1cc;
+        border-radius: 50px;
+        padding: 0.65rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: block;
+    }
+    .btn-change-profile:hover {
+        background: #fff0f5;
+        border-color: #d11d5f;
+        transform: translateY(-1px);
+    }
+
+    /* Pagination */
+    .page-link-pink {
+        background: linear-gradient(135deg, #ff85a8, #d11d5f);
+        color: white !important;
+        border: none;
+        border-radius: 50px;
+        padding: 0.4rem 1.2rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(209, 29, 95, 0.25);
+    }
+    .page-link-pink:hover {
+        background: linear-gradient(135deg, #d11d5f, #a0154a);
+        transform: translateY(-1px);
+    }
+    .page-link-num {
+        background: white;
+        color: #d11d5f !important;
+        border: 2px solid #ffc1cc;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .page-link-num:hover {
+        background: #fff0f5;
+        border-color: #d11d5f;
+    }
+    .page-link-active {
+        background: linear-gradient(135deg, #ff85a8, #d11d5f);
+        color: white !important;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(209, 29, 95, 0.3);
+    }
+    .post-divider {
+        border-color: #ffc1cc;
+        opacity: 0.5;
+    }
+</style>
+
+<div class="row g-4 align-items-start">
+    <!-- Posts Column -->
     <div class="col-lg-8">
-        <div class="post-feed-wrapper">
-            {% for post in posts %}
-                <!-- Changed bg-white to bg-body-tertiary -->
-                <article class="card p-4 mb-4 bg-body-tertiary shadow-sm border-0">
-                    
-                    <div class="d-flex align-items-center mb-3">
-                        {% if post.author.profile.image %}
-                            <img class="rounded-circle me-2" src="{{ post.author.profile.image.url }}" style="width: 35px; height: 35px; object-fit: cover; border: 1px solid var(--border-color);">
-                        {% elif post.author.image %}
-                            <img class="rounded-circle me-2" src="{{ post.author.image.url }}" style="width: 35px; height: 35px; object-fit: cover; border: 1px solid var(--border-color);">
-                        {% else %}
-                            <i class="fas fa-user-circle fa-2x me-2 text-muted"></i>
-                        {% endif %}
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="fw-bold" style="color: var(--pink-primary); font-size: 1.05rem; letter-spacing: -0.2px;">{{ post.author.username }}</span>
-                            <span class="text-muted" style="font-size: 0.9rem; font-weight: 400;">{{ post.date_posted|date:"M d, Y" }}</span>
-                        </div>
-                    </div>
-                    
-                    <h2 class="fw-bold mb-3" style="color: var(--text-main); font-size: 1.85rem; letter-spacing: -0.3px; line-height: 1.3;">
-                        {{ post.title }}
-                    </h2>
-                    
-                    {% if post.image %}
-                        <div class="mb-3 rounded overflow-hidden" style="border: 1px solid var(--border-color);">
-                            <img src="{{ post.image.url }}" class="img-fluid w-100" style="object-fit: cover; max-height: 520px;">
-                        </div>
-                    {% endif %}
-
-                    <div class="text-secondary mb-4" style="white-space: pre-wrap; word-break: break-word; font-size: 1rem; line-height: 1.65; color: var(--text-muted-link) !important;">
-                        {{ post.content }}
-                    </div>
-
-                    <div class="d-flex gap-2 border-top pt-3" style="border-color: var(--border-color) !important;">
-                        <a href="{% url 'post-detail' post.id %}" class="btn btn-sm btn-outline-pink px-3 d-flex align-items-center gap-1.5">
-                            <i class="far fa-eye" style="font-size: 0.85rem;"></i> See Details
-                        </a>
-                        <a href="{% url 'post-update' post.id %}" class="btn btn-sm px-3 d-flex align-items-center gap-1.5" style="background-color: var(--search-bg); color: var(--text-muted-link); border-radius: 30px; font-size: 0.88rem; font-weight: 500;">
-                            <i class="far fa-edit" style="font-size: 0.85rem;"></i> Edit Post
-                        </a>
-                    </div>
-                </article>
-            {% empty %}
-                <!-- Changed bg-white to bg-body-tertiary -->
-                <div class="card p-5 text-center bg-body-tertiary shadow-sm border-0 mb-4">
-                    <p class="text-muted mb-0" style="font-size: 0.95rem;">No log posts found in the system feed yet.</p>
+        {% for post in posts %}
+        <div class="post-card">
+            <div class="d-flex align-items-center mb-3">
+                {% if post.author.profile.image %}
+                    <img class="rounded-circle me-2" src="{{ post.author.profile.image.url }}"
+                        style="width:38px;height:38px;object-fit:cover;border:2px solid #ffc1cc;">
+                {% else %}
+                    <i class="fas fa-user-circle fa-2x me-2" style="color:#f48fb1;"></i>
+                {% endif %}
+                <div>
+		    <a href="{% url 'user-profile' post.author.username %}" class="post-author" style="text-decoration:none;">{{ post.author.username }}</a>
+                    <span class="ms-2 post-date">{{ post.date_posted|date:"M d, Y" }}</span>
                 </div>
-            {% endfor %}
+            </div>
+
+            <h2 class="post-title mb-3">{{ post.title }}</h2>
+
+            {% if post.image %}
+                <div class="mb-3 rounded-4 overflow-hidden">
+                    <img src="{{ post.image.url }}" class="img-fluid w-100" style="max-height:480px;object-fit:cover;">
+                </div>
+            {% endif %}
+
+            <p class="post-content mb-4">{{ post.content }}</p>
+
+            <div class="d-flex gap-2 border-top pt-3" style="border-color:#fce4ec !important;">
+                <a href="{% url 'post-detail' post.id %}" class="btn-see-details">See Details</a>
+                <a href="{% url 'post-update' post.id %}" class="btn-edit-post">Edit Post</a>
+            </div>
         </div>
+        {% endfor %}
 
         {% if is_paginated %}
-            <nav aria-label="Page navigation" class="mt-4 mb-5">
-                <ul class="pagination justify-content-center align-items-center gap-2">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link btn-outline-pink px-3 py-1.5" href="?page={{ page_obj.previous_page_number }}" style="border-radius: 20px; font-size: 0.85rem;">Previous</a>
-                        </li>
+        <nav class="mt-2 mb-5">
+            <ul class="pagination justify-content-center align-items-center gap-2 list-unstyled d-flex">
+                {% if page_obj.has_previous %}
+                    <li>
+                        <a class="page-link-pink" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li><span class="page-link-active">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li><a class="page-link-num" href="?page={{ num }}">{{ num }}</a></li>
                     {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item">
-                                <span class="page-link px-3 py-1.5 text-white border-0 fw-bold shadow-sm" style="background: var(--pink-gradient); border-radius: 50%; min-width: 35px; text-align: center; font-size: 0.85rem;">{{ num }}</span>
-                            </li>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link btn-outline-pink p-0 d-flex align-items-center justify-content-center" href="?page={{ num }}" style="border-radius: 50%; width: 35px; height: 35px; font-size: 0.85rem;">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link btn-outline-pink px-3 py-1.5" href="?page={{ page_obj.next_page_number }}" style="border-radius: 20px; font-size: 0.85rem;">Next</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li>
+                        <a class="page-link-pink" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
         {% endif %}
     </div>
 
+    <!-- Profile Column -->
     <div class="col-lg-4">
-        <div class="position-sticky" style="top: 100px;">
-            <!-- Changed bg-white to bg-body-tertiary -->
-            <div class="card p-4 text-center bg-body-tertiary shadow-sm border-0">
+        <div class="sticky-top" style="top: 80px;">
+            <div class="profile-card">
                 {% if user.is_authenticated %}
-                    <div class="d-inline-block mx-auto mb-3">
-                        <img class="rounded-circle shadow-sm" src="{{ user.profile.image.url }}" style="width: 110px; height: 110px; object-fit: cover; border: 4px solid var(--bg-canvas);">
-                    </div>
-                    <h4 class="fw-bold mb-1" style="color: var(--text-main); font-size: 1.25rem; letter-spacing: -0.2px;">{{ user.username }}</h4>
-                    <p class="text-muted mb-4" style="font-size: 0.85rem;">{{ user.email }}</p>
-                    
-                    <div class="d-flex flex-column gap-2">
-                        <a class="btn btn-pink w-100 py-2.5" href="{% url 'post-create' %}">
-                            <i class="fas fa-pen me-1.5" style="font-size: 0.85rem;"></i> Write New Post
-                        </a>
-                        <a class="btn btn-outline-pink w-100 py-2.5 d-flex align-items-center justify-content-center gap-2" href="{% url 'profile' %}" style="font-size: 0.9rem;">
-                            <i class="fas fa-user-cog" style="font-size: 0.85rem;"></i> Change Profile
-                        </a>
-                    </div>
+                    <img class="rounded-circle mb-3" src="{{ user.profile.image.url }}"
+                        style="width:110px;height:110px;object-fit:cover;border:3px solid #ffc1cc;box-shadow:0 4px 15px rgba(209,29,95,0.2);">
+                    <h4>{{ user.username }}</h4>
+                    <p class="mb-4">{{ user.email }}</p>
+                    <a class="btn-write" href="{% url 'post-create' %}">Write New Post</a>
+                    <a class="btn-change-profile" href="{% url 'profile' %}">Change Profile</a>
                 {% else %}
-                    <h5 class="fw-bold mb-2" style="color: var(--pink-primary);">Welcome to DevBlog</h5>
-                    <p class="small text-muted mb-4">Log in to post your updates and view track logs.</p>
-                    <a class="btn btn-pink w-100 py-2" href="{% url 'login' %}">Sign In</a>
+                    <h5 class="fw-bold mb-3" style="color:#2d2d2d;">Welcome to DevBlog</h5>
+                    <a class="btn-write" href="{% url 'login' %}">Sign In</a>
                 {% endif %}
             </div>
         </div>
     </div>
-
 </div>
 {% endblock content %}

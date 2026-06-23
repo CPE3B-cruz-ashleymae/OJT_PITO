@@ -1,72 +1,231 @@
 {% extends "blog/base.html" %}
-
 {% block content %}
-    <article class="card p-4 mb-4 border-0 shadow-sm">
-        <div class="d-flex align-items-center mb-4">
-            <img class="rounded-circle me-3" src="{{ object.author.profile.image.url }}" style="width: 50px; height: 50px; object-fit: cover;">
+<style>
+    body {
+        background: linear-gradient(135deg, #ffe0eb 0%, #ffb3c6 40%, #ff85a8 70%, #d11d5f 100%) !important;
+        min-height: 100vh;
+    }
+
+    .container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    .detail-wrapper {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 6rem 1rem 2rem;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(209, 29, 95, 0.2);
+        overflow: hidden;
+    }
+
+    /* Author header */
+    .detail-author-bar {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #fce4ec;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .detail-author-bar img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ffc1cc;
+        box-shadow: 0 2px 10px rgba(209,29,95,0.2);
+    }
+
+    .detail-author-bar .author-name {
+        font-weight: 800;
+        color: #d11d5f;
+        text-decoration: none;
+        font-size: 1rem;
+    }
+
+    .detail-author-bar .author-name:hover {
+        text-decoration: underline;
+    }
+
+    .detail-author-bar .post-date {
+        font-size: 0.82rem;
+        color: #aaa;
+        display: block;
+        margin-top: 0.1rem;
+    }
+
+    /* Post content area */
+    .detail-body {
+        padding: 2rem 2.5rem;
+    }
+
+    .detail-body h1 {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #1a1a2e;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .detail-content {
+        color: #555;
+        line-height: 1.8;
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Post image */
+    .detail-image {
+        width: 100%;
+        max-height: 450px;
+        object-fit: cover;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 20px rgba(209,29,95,0.1);
+    }
+
+    /* Action buttons */
+    .detail-actions {
+        display: flex;
+        gap: 1rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #fce4ec;
+    }
+
+    .btn-back {
+        background: white;
+        color: #d11d5f !important;
+        border: 2px solid #ffc1cc;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-back:hover {
+        background: #fff0f5;
+        border-color: #d11d5f;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(209,29,95,0.15);
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #ff6b9d, #d11d5f);
+        color: white !important;
+        border: none;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        box-shadow: 0 4px 12px rgba(209,29,95,0.3);
+    }
+
+    .btn-edit:hover {
+        background: linear-gradient(135deg, #d11d5f, #a0154a);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(209,29,95,0.4);
+        color: white !important;
+    }
+
+    /* Code styling */
+    #markdown-content-body pre {
+        background-color: #1d1f21 !important;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin: 1.5rem 0;
+        overflow-x: auto;
+        box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    #markdown-content-body code {
+        font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+        font-size: 0.92rem;
+    }
+
+    #markdown-content-body :not(pre) > code {
+        background-color: #fff0f5;
+        color: #d11d5f;
+        padding: 0.2rem 0.4rem;
+        border-radius: 6px;
+        font-size: 0.88rem;
+    }
+
+    @media (max-width: 768px) {
+        .detail-wrapper { padding: 5rem 1rem 2rem; }
+        .detail-body { padding: 1.5rem; }
+        .detail-body h1 { font-size: 1.5rem; }
+        .detail-author-bar { padding: 1rem 1.5rem; }
+        .detail-actions { flex-direction: column; }
+    }
+</style>
+
+<div class="detail-wrapper">
+    <div class="detail-card">
+
+        <!-- Author Bar -->
+        <div class="detail-author-bar">
+            <img src="{{ object.author.profile.image.url }}" alt="{{ object.author.username }}">
             <div>
-                <a class="fw-bold text-decoration-none" href="#" style="color: var(--pink-primary);">{{ object.author.username }}</a>
-                <small class="text-muted d-block">{{ object.date_posted|date:"F d, Y" }}</small>
+                <a class="author-name" href="#">{{ object.author.username }}</a>
+                <span class="post-date">{{ object.date_posted|date:"F d, Y" }}</span>
             </div>
         </div>
-        
-        <h1 class="fw-bold mb-3" style="color: var(--text-main);">{{ object.title }}</h1>
-        
-        <div id="markdown-content-body" class="text-secondary lh-lg mb-4">
-            {{ object.content }}
-        </div>
 
-        <div class="d-flex gap-2 border-top pt-3">
-            <a href="{% url 'blog-home' %}" class="btn btn-sm btn-outline-pink px-3">
-                <i class="fas fa-arrow-left me-1"></i> Back to Feed
-            </a>
+        <!-- Post Body -->
+        <div class="detail-body">
+            <h1>{{ object.title }}</h1>
 
-            {% if object.author == user %}
-                <a href="{% url 'post-update' object.id %}" class="btn btn-sm btn-light border px-3" style="color: var(--text-main); background-color: var(--search-bg); border-color: var(--border-color) !important;">
-                    <i class="fas fa-edit me-1"></i> Edit Post
-                </a>
+            {% if object.image %}
+                <img src="{{ object.image.url }}" class="detail-image" alt="{{ object.title }}">
             {% endif %}
+
+            <div id="markdown-content-body" class="detail-content">
+                {{ object.content }}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="detail-actions">
+                <a href="{% url 'blog-home' %}" class="btn-back">
+                    ← Back to Feed
+                </a>
+                {% if object.author == user %}
+                    <a href="{% url 'post-update' object.id %}" class="btn-edit">
+                        ✏️ Edit Post
+                    </a>
+                {% endif %}
+            </div>
         </div>
-    </article>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const contentArea = document.getElementById("markdown-content-body");
-            if (contentArea) {
-                // Cleanly parse raw model text string layout content into HTML
-                const rawText = contentArea.textContent || contentArea.innerText;
-                contentArea.innerHTML = marked.parse(rawText.trim());
-                
-                // Re-trigger Prism engine highlight parsing pass on dynamically generated DOM nodes
-                if (window.Prism) {
-                    Prism.highlightAllUnder(contentArea);
-                }
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const contentArea = document.getElementById("markdown-content-body");
+        if (contentArea) {
+            const rawText = contentArea.textContent || contentArea.innerText;
+            contentArea.innerHTML = marked.parse(rawText.trim());
+            if (window.Prism) {
+                Prism.highlightAllUnder(contentArea);
             }
-        });
-    </script>
-
-    <style>
-        /* Styling adjustments for technical rendering components inside articles */
-        #markdown-content-body pre {
-            background-color: #1d1f21 !important;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin: 1.5rem 0;
-            overflow-x: auto;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
         }
-        #markdown-content-body code {
-            font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
-            font-size: 0.92rem;
-        }
-        /* Style normal inline single-backtick code snippets safely */
-        #markdown-content-body :not(pre) > code {
-            background-color: var(--search-bg);
-            color: var(--pink-primary);
-            padding: 0.2rem 0.4rem;
-            border-radius: 6px;
-            font-size: 0.88rem;
-        }
-    </style>
+    });
+</script>
 {% endblock content %}
